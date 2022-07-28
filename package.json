@@ -10,6 +10,7 @@
   "private": true,
   "dependencies": {
     "@nrwl/next": "14.4.3",
+    "@prisma/client": "^4.1.0",
     "core-js": "^3.6.5",
     "next": "12.1.6",
     "react": "18.2.0",
@@ -27,6 +28,7 @@
     "@nrwl/react": "14.4.3",
     "@nrwl/web": "14.4.3",
     "@nrwl/workspace": "14.4.3",
+    "@nx-tools/nx-prisma": "^3.0.1",
     "@testing-library/react": "13.3.0",
     "@types/jest": "27.4.1",
     "@types/node": "16.11.7",
@@ -47,6 +49,7 @@
     "jest": "27.5.1",
     "nx": "14.4.3",
     "prettier": "^2.6.2",
+    "prisma": "^4.1.0",
     "react-test-renderer": "18.2.0",
     "ts-jest": "27.1.4",
     "ts-node": "~10.8.0",
