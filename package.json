@@ -9,10 +9,12 @@
   },
   "private": true,
   "dependencies": {
+    "@next-auth/prisma-adapter": "^1.0.4",
     "@nrwl/next": "14.4.3",
     "@prisma/client": "^4.1.0",
     "core-js": "^3.6.5",
     "next": "12.1.6",
+    "next-auth": "^4.10.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "regenerator-runtime": "0.13.7",
