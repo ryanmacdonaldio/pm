@@ -9,6 +9,11 @@ datasource db {
   referentialIntegrity = "prisma"
 }
 
+generator zod {
+  provider = "zod-prisma"
+  output   = "./src/validators" // The directory where generated zod schemas will be saved
+}
+
 // Necessary for NextAuth
 model Account {
   id                String  @id @default(cuid())

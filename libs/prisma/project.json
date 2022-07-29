@@ -3,6 +3,10 @@
   "sourceRoot": "libs/prisma/src",
   "projectType": "library",
   "targets": {
+    "build": {
+      "builder": "@nx-tools/nx-prisma:generate",
+      "outputs": ["src/validators/*.ts"]
+    },
     "lint": {
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
