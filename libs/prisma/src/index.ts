@@ -11,3 +11,5 @@ export const prisma = global.prisma || new PrismaClient();
 if (env.NODE_END !== 'production') {
   global.prisma = prisma;
 }
+
+export * from './validators';
