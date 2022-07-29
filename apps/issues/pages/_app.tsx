@@ -1,17 +1,14 @@
+import { SessionProvider } from 'next-auth/react';
 import { AppProps } from 'next/app';
-import Head from 'next/head';
-import './styles.css';
 
-function CustomApp({ Component, pageProps }: AppProps) {
+function CustomApp({
+  Component,
+  pageProps: { session, ...pageProps },
+}: AppProps) {
   return (
-    <>
-      <Head>
-        <title>Welcome to issues!</title>
-      </Head>
-      <main className="app">
-        <Component {...pageProps} />
-      </main>
-    </>
+    <SessionProvider session={session}>
+      <Component {...pageProps} />
+    </SessionProvider>
   );
 }
 
