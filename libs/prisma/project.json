@@ -3,6 +3,9 @@
   "sourceRoot": "libs/prisma/src",
   "projectType": "library",
   "targets": {
+    "build": {
+      "builder": "@nx-tools/nx-prisma:generate"
+    },
     "lint": {
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
