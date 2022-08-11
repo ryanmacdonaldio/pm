@@ -77,23 +77,26 @@ export function Sidebar() {
         {links.map((link, idx) => {
           return link.links ? (
             <li className="mb-1 ml-1">
-              <div className="flex items-center mr-4 space-x-2" key={link.text}>
+              <div
+                className="flex items-center mr-4 space-x-2 text-slate-300 hover:text-slate-100"
+                key={link.text}
+                onClick={() =>
+                  setLinks(
+                    links.map((check_link, check_idx) =>
+                      check_idx == idx
+                        ? { ...check_link, expanded: !check_link.expanded }
+                        : check_link
+                    )
+                  )
+                }
+              >
                 {link.icon && <link.icon className="h-4 w-4" />}
                 <span>{link.text}</span>
                 <div className="flex-grow" />
                 <ArrowRightIcon
                   className={`${
                     link.expanded && 'rotate-90'
-                  } duration-500 h-3 transition-all w-3`}
-                  onClick={() =>
-                    setLinks(
-                      links.map((check_link, check_idx) =>
-                        check_idx == idx
-                          ? { ...check_link, expanded: !check_link.expanded }
-                          : check_link
-                      )
-                    )
-                  }
+                  } duration-500 h-3 transition-transform w-3`}
                 />
               </div>
               <ul
@@ -103,7 +106,10 @@ export function Sidebar() {
               >
                 {link.links.map((sublink) => {
                   return (
-                    <li className="ml-1" key={sublink.text}>
+                    <li
+                      className="ml-1 text-slate-300 hover:text-slate-100"
+                      key={sublink.text}
+                    >
                       {sublink.text}
                     </li>
                   );
@@ -112,7 +118,7 @@ export function Sidebar() {
             </li>
           ) : (
             <li
-              className="flex items-center mb-1 ml-1 space-x-2"
+              className="flex items-center mb-1 ml-1 space-x-2 text-slate-300 hover:text-slate-100"
               key={link.text}
             >
               {link.icon && <link.icon className="h-4 w-4" />}
