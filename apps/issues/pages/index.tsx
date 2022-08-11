@@ -2,7 +2,6 @@ import {
   Bar,
   BarChart,
   CartesianGrid,
-  Legend,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -17,6 +16,7 @@ interface Ticket {
   status: string;
   type: string;
   priority: string;
+  assignee?: string;
 }
 
 export function Index() {
@@ -58,50 +58,47 @@ export function Index() {
     },
   ];
 
-  const data = tickets
+  const projects = tickets
     .map((ticket) => ticket.project)
-    .filter((value, index, self) => self.indexOf(value) === index)
-    .map((project) => {
-      const project_tickets = tickets.filter(
-        (ticket) => ticket.project === project
-      );
+    .filter((value, index, self) => self.indexOf(value) === index);
 
-      return {
-        project,
-        status_backlog: project_tickets.filter(
-          (ticket) => ticket.status === 'backlog'
-        ).length,
-        status_code: project_tickets.filter(
-          (ticket) => ticket.status === 'code'
-        ).length,
-        status_test: project_tickets.filter(
-          (ticket) => ticket.status === 'test'
-        ).length,
-        status_refactor: project_tickets.filter(
-          (ticket) => ticket.status === 'refactor'
-        ).length,
-        type_chore: project_tickets.filter((ticket) => ticket.type === 'chore')
-          .length,
-        type_feat: project_tickets.filter((ticket) => ticket.type === 'feat')
-          .length,
-        type_fix: project_tickets.filter((ticket) => ticket.type === 'fix')
-          .length,
-        priority_urgent: project_tickets.filter(
-          (ticket) => ticket.priority === 'urgent'
-        ).length,
-        priority_high: project_tickets.filter(
-          (ticket) => ticket.priority === 'high'
-        ).length,
-        priority_medium: project_tickets.filter(
-          (ticket) => ticket.priority === 'medium'
-        ).length,
-        priority_low: project_tickets.filter(
-          (ticket) => ticket.priority === 'low'
-        ).length,
-      };
-    });
+  const data = projects.map((project) => {
+    const project_tickets = tickets.filter(
+      (ticket) => ticket.project === project
+    );
 
-  console.log(data);
+    return {
+      project,
+      status_backlog: project_tickets.filter(
+        (ticket) => ticket.status === 'backlog'
+      ).length,
+      status_code: project_tickets.filter((ticket) => ticket.status === 'code')
+        .length,
+      status_test: project_tickets.filter((ticket) => ticket.status === 'test')
+        .length,
+      status_refactor: project_tickets.filter(
+        (ticket) => ticket.status === 'refactor'
+      ).length,
+      type_chore: project_tickets.filter((ticket) => ticket.type === 'chore')
+        .length,
+      type_feat: project_tickets.filter((ticket) => ticket.type === 'feat')
+        .length,
+      type_fix: project_tickets.filter((ticket) => ticket.type === 'fix')
+        .length,
+      priority_urgent: project_tickets.filter(
+        (ticket) => ticket.priority === 'urgent'
+      ).length,
+      priority_high: project_tickets.filter(
+        (ticket) => ticket.priority === 'high'
+      ).length,
+      priority_medium: project_tickets.filter(
+        (ticket) => ticket.priority === 'medium'
+      ).length,
+      priority_low: project_tickets.filter(
+        (ticket) => ticket.priority === 'low'
+      ).length,
+    };
+  });
 
   return (
     <div className="flex">
@@ -110,10 +107,30 @@ export function Index() {
         <span className="col-span-4 font-medium pl-2 text-2xl text-slate-900">
           Dashboard
         </span>
-        <div className="bg-slate-50 p-4 rounded-lg">Active Projects</div>
-        <div className="bg-slate-50 p-4 rounded-lg">Resolved Tickets</div>
-        <div className="bg-slate-50 p-4 rounded-lg">Unresolved Tickets</div>
-        <div className="bg-slate-50 p-4 rounded-lg">Unassigned Tickets</div>
+        <div className="items-center bg-slate-50 flex font-medium justify-between p-4 rounded-lg">
+          <span className="text-xl">Active Projects</span>
+          <div className="bg-blue-200 border-2 border-blue-800 rounded-full px-3 py-1 text-blue-800">
+            {projects.length}
+          </div>
+        </div>
+        <div className="items-center bg-slate-50 flex font-medium justify-between p-4 rounded-lg">
+          <span className="text-xl">Urgent Tickets</span>
+          <div className="bg-red-200 border-2 border-red-800 rounded-full px-3 py-1 text-red-800">
+            {tickets.filter((ticket) => ticket.priority === 'urgent').length}
+          </div>
+        </div>
+        <div className="items-center bg-slate-50 flex font-medium justify-between p-4 rounded-lg">
+          <span className="text-xl">Unresolved Tickets</span>
+          <div className="bg-orange-200 border-2 border-orange-800 rounded-full px-3 py-1 text-orange-800">
+            {tickets.filter((ticket) => ticket.status !== 'done').length}
+          </div>
+        </div>
+        <div className="items-center bg-slate-50 flex font-medium justify-between p-4 rounded-lg">
+          <span className="text-xl">Unassigned Tickets</span>
+          <div className="bg-purple-200 border-2 border-purple-800 rounded-full px-3 py-1 text-purple-800">
+            {tickets.filter((ticket) => ticket.assignee === undefined).length}
+          </div>
+        </div>
         <div className="bg-slate-50 col-span-4 p-4 rounded-lg">
           <span>Tickets</span>
           <ResponsiveContainer height={500} width="100%">
