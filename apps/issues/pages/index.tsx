@@ -1,3 +1,4 @@
+import { PlusIcon } from '@heroicons/react/outline';
 import {
   Bar,
   BarChart,
@@ -104,9 +105,19 @@ export function Index() {
     <div className="flex">
       <Sidebar />
       <main className="auto-rows-min bg-slate-200 flex-grow gap-4 grid grid-cols-4 p-4">
-        <span className="col-span-4 font-medium pl-2 text-2xl text-slate-900">
-          Dashboard
-        </span>
+        <div className="col-span-4 flex items-center justify-between px-2">
+          <span className="font-medium text-2xl text-slate-900">Dashboard</span>
+          <div className="flex space-x-4">
+            <button className="bg-blue-100 border-2 border-blue-400 flex items-center px-3 py-1 rounded-md space-x-2 text-blue-900">
+              <PlusIcon className="h-3 w-3" />
+              <span>Add Project</span>
+            </button>
+            <button className="bg-green-100 border-2 border-green-400 flex items-center px-3 py-1 rounded-md space-x-2 text-green-900">
+              <PlusIcon className="h-3 w-3" />
+              <span>Add Ticket</span>
+            </button>
+          </div>
+        </div>
         <div className="items-center bg-slate-50 flex font-medium justify-between p-4 rounded-lg">
           <span className="text-xl">Active Projects</span>
           <div className="bg-blue-200 border-2 border-blue-800 rounded-full px-3 py-1 text-blue-800">
