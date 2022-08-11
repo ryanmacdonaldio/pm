@@ -4,6 +4,7 @@ import {
   BookOpenIcon,
   HomeIcon,
 } from '@heroicons/react/outline';
+import { signIn, signOut, useSession } from 'next-auth/react';
 import { useState } from 'react';
 
 interface Link {
@@ -15,6 +16,8 @@ interface Link {
 }
 
 export function Sidebar() {
+  const { data } = useSession();
+
   const [links, setLinks] = useState<Link[]>([
     {
       icon: HomeIcon,
@@ -128,6 +131,22 @@ export function Sidebar() {
         })}
       </ul>
       <div className="border-t border-slate-400 mx-4 mb-4" />
+      <div className="flex-grow" />
+      {data ? (
+        <button
+          className="bg-slate-600 mx-4 p-2 rounded-md hover:bg-slate-700"
+          onClick={() => signOut()}
+        >
+          Sign Out
+        </button>
+      ) : (
+        <button
+          className="bg-slate-600 mx-4 p-2 rounded-md hover:bg-slate-700"
+          onClick={() => signIn()}
+        >
+          Sign In
+        </button>
+      )}
     </aside>
   );
 }
