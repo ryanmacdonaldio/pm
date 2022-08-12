@@ -42,13 +42,14 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
+  id                  String                @id @default(cuid())
+  name                String?
+  email               String?               @unique
+  emailVerified       DateTime?
+  image               String?
+  accounts            Account[]
+  sessions            Session[]
+  UsersInOrganization UsersInOrganization[]
 }
 
 model VerificationToken {
@@ -57,4 +58,21 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model Organization {
+  id                  String                @id @default(cuid())
+  name                String                @unique
+  description         String?
+  UsersInOrganization UsersInOrganization[]
+}
+
+model UsersInOrganization {
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  userId         String
+  user           User         @relation(fields: [userId], references: [id])
+  admin          Boolean      @default(false)
+
+  @@id([organizationId, userId])
 }
