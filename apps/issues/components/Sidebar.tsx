@@ -5,6 +5,7 @@ import {
   HomeIcon,
 } from '@heroicons/react/outline';
 import { signIn, signOut, useSession } from 'next-auth/react';
+import Link from 'next/link';
 import { useState } from 'react';
 
 interface Link {
@@ -79,7 +80,7 @@ export function Sidebar() {
       <ul className="mb-4 ml-3">
         {links.map((link, idx) => {
           return link.links ? (
-            <li className="mb-1 ml-1">
+            <li key={link.text} className="mb-1 ml-1">
               <div
                 className="flex items-center mr-4 space-x-2 text-slate-300 hover:text-slate-100"
                 key={link.text}
@@ -125,7 +126,7 @@ export function Sidebar() {
               key={link.text}
             >
               {link.icon && <link.icon className="h-4 w-4" />}
-              <span>{link.text}</span>
+              <Link href={link.url}>{link.text}</Link>
             </li>
           );
         })}
