@@ -1,5 +1,6 @@
 import { SessionProvider } from 'next-auth/react';
 import { AppProps } from 'next/app';
+import Layout from '../components/Layout';
 
 import './styles.css';
 
@@ -9,7 +10,9 @@ function CustomApp({
 }: AppProps) {
   return (
     <SessionProvider session={session}>
-      <Component {...pageProps} />
+      <Layout>
+        <Component {...pageProps} />
+      </Layout>
     </SessionProvider>
   );
 }
