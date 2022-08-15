@@ -3,6 +3,7 @@ import {
   BookmarkIcon,
   BookOpenIcon,
   HomeIcon,
+  PlusIcon,
 } from '@heroicons/react/outline';
 import { signIn, signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
@@ -133,6 +134,20 @@ export function Sidebar() {
       </ul>
       <div className="border-t border-slate-400 mx-4 mb-4" />
       <div className="flex-grow" />
+      <div className="flex flex-col mb-4 mx-4 space-y-1">
+        <span className="text-slate-50">Organization:</span>
+        <select className="text-slate-800 py-1">
+          <option value="1">Organization 1</option>
+          <option value="2">Organization 2</option>
+          <option value="3">Organization 3</option>
+          <option value="4">Organization 4</option>
+        </select>
+        <button className="bg-slate-100 border-2 border-slate-400 flex items-center justify-center px-3 py-1 rounded-md space-x-2 text-slate-900 text-sm">
+          <PlusIcon className="h-3 w-3" />
+          <span>Create</span>
+        </button>
+      </div>
+      <div className="border-t border-slate-400 mx-4 mb-4" />
       {data ? (
         <button
           className="bg-slate-600 mx-4 p-2 rounded-md hover:bg-slate-700"
