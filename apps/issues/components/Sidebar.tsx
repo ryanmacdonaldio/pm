@@ -17,6 +17,11 @@ interface Link {
   url?: string;
 }
 
+interface Organization {
+  id: number;
+  name: string;
+}
+
 export function Sidebar() {
   const { data } = useSession();
 
@@ -73,6 +78,25 @@ export function Sidebar() {
       ],
     },
   ]);
+
+  const organizations: Organization[] = [
+    {
+      id: 1,
+      name: 'Organization 1',
+    },
+    {
+      id: 2,
+      name: 'Organization 2',
+    },
+    {
+      id: 3,
+      name: 'Organization 3',
+    },
+    {
+      id: 4,
+      name: 'Organization 4',
+    },
+  ];
 
   return (
     <aside className="bg-slate-800 flex flex-col h-screen py-4 sticky text-slate-200 top-0 w-48">
@@ -137,10 +161,17 @@ export function Sidebar() {
       <div className="flex flex-col mb-4 mx-4 space-y-1">
         <span className="text-slate-50">Organization:</span>
         <select className="text-slate-800 py-1">
-          <option value="1">Organization 1</option>
-          <option value="2">Organization 2</option>
-          <option value="3">Organization 3</option>
-          <option value="4">Organization 4</option>
+          {organizations.map((organization) => (
+            <option
+              key={organization.id}
+              value={organization.id}
+              selected={
+                data && data.user.settings.organization === organization.id
+              }
+            >
+              {organization.name}
+            </option>
+          ))}
         </select>
         <button className="bg-slate-100 border-2 border-slate-400 flex items-center justify-center px-3 py-1 rounded-md space-x-2 text-slate-900 text-sm">
           <PlusIcon className="h-3 w-3" />

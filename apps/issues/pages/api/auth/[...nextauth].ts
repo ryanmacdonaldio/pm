@@ -8,7 +8,6 @@ export default NextAuth({
   callbacks: {
     async session({ session, user }) {
       session.user.settings = user.settings;
-      console.log(session);
       return session;
     },
   },
