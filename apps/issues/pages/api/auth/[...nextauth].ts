@@ -5,6 +5,13 @@ import GithubProvider from 'next-auth/providers/github';
 
 export default NextAuth({
   adapter: PrismaAdapter(prisma),
+  callbacks: {
+    async session({ session, user }) {
+      session.user.settings = user.settings;
+      console.log(session);
+      return session;
+    },
+  },
   providers: [
     GithubProvider({
       clientId: process.env.GITHUB_CLIENT_ID,
