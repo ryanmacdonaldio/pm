@@ -4,7 +4,7 @@ export default function Layout({ children }) {
   return (
     <div className="flex">
       <Sidebar />
-      {children}
+      <main className="bg-slate-200 flex-grow p-4">{children}</main>
     </div>
   );
 }
