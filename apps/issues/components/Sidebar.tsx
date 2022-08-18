@@ -173,10 +173,12 @@ export function Sidebar() {
             </option>
           ))}
         </select>
-        <button className="bg-slate-100 border-2 border-slate-400 flex items-center justify-center px-3 py-1 rounded-md space-x-2 text-slate-900 text-sm">
-          <PlusIcon className="h-3 w-3" />
-          <span>Create</span>
-        </button>
+        <Link href="/organizations/add">
+          <button className="bg-slate-100 border-2 border-slate-400 flex items-center justify-center px-3 py-1 rounded-md space-x-2 text-slate-900 text-sm">
+            <PlusIcon className="h-3 w-3" />
+            <span>Create</span>
+          </button>
+        </Link>
       </div>
       <div className="border-t border-slate-400 mx-4 mb-4" />
       {data ? (
