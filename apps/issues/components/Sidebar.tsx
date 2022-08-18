@@ -5,8 +5,7 @@ import {
   HomeIcon,
   PlusIcon,
 } from '@heroicons/react/outline';
-import { Session } from 'next-auth';
-import { signIn, signOut } from 'next-auth/react';
+import { signIn, signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useState } from 'react';
 
@@ -34,7 +33,9 @@ interface Organization {
   name: string;
 }
 
-export function Sidebar({ session }: { session: Session }) {
+export function Sidebar() {
+  const { data: session } = useSession();
+
   const [links, setLinks] = useState<Link[]>([
     {
       type: 'url',

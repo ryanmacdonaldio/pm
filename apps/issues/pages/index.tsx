@@ -1,6 +1,5 @@
 import { InformationCircleIcon, PlusIcon } from '@heroicons/react/outline';
 import { GetServerSidePropsContext } from 'next';
-import { Session } from 'next-auth';
 import {
   Bar,
   BarChart,
@@ -19,6 +18,7 @@ import {
 
 import Layout from '../components/Layout';
 import { getAuthSession } from '../server/common/get-server-session';
+import { prisma } from '../server/db/client';
 
 interface Project {
   title: string;
@@ -35,7 +35,7 @@ interface Ticket {
   assignee?: string;
 }
 
-export function Index({ session }: { session: Session }) {
+export function Index() {
   const today = new Date();
   const dateOptions: Intl.DateTimeFormatOptions = {
     day: 'numeric',
@@ -170,7 +170,7 @@ export function Index({ session }: { session: Session }) {
   });
 
   return (
-    <Layout session={session}>
+    <Layout>
       <div className="auto-rows-min gap-4 grid grid-cols-4">
         <div className="col-span-4 flex items-center justify-between px-2">
           <span className="font-medium text-2xl text-slate-900">Dashboard</span>
@@ -280,6 +280,16 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     return {
       redirect: {
         destination: '/api/auth/signin',
+      },
+    };
+  }
+
+  const organizations = await prisma.organization.findMany();
+
+  if (organizations.length === 0) {
+    return {
+      redirect: {
+        destination: '/organizations/add',
       },
     };
   }
