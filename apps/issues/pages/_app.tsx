@@ -2,20 +2,14 @@ import { AppProps } from 'next/app';
 import { SessionProvider } from 'next-auth/react';
 import { withTRPC } from '@trpc/next';
 
-import Layout from '../components/Layout';
 import { AppRouter } from '../server/router';
 
 import './styles.css';
 
-function CustomApp({
-  Component,
-  pageProps: { session, ...pageProps },
-}: AppProps) {
+function CustomApp({ Component, pageProps }: AppProps) {
   return (
-    <SessionProvider session={session}>
-      <Layout>
-        <Component {...pageProps} />
-      </Layout>
+    <SessionProvider session={pageProps.session} refetchInterval={0}>
+      <Component {...pageProps} />
     </SessionProvider>
   );
 }
@@ -34,4 +28,5 @@ export default withTRPC<AppRouter>({
       url,
     };
   },
+  ssr: true,
 })(CustomApp);

@@ -5,7 +5,8 @@ import {
   HomeIcon,
   PlusIcon,
 } from '@heroicons/react/outline';
-import { signIn, signOut, useSession } from 'next-auth/react';
+import { Session } from 'next-auth';
+import { signIn, signOut } from 'next-auth/react';
 import Link from 'next/link';
 import { useState } from 'react';
 
@@ -22,9 +23,7 @@ interface Organization {
   name: string;
 }
 
-export function Sidebar() {
-  const { data } = useSession();
-
+export function Sidebar({ session }: { session: Session }) {
   const [links, setLinks] = useState<Link[]>([
     {
       icon: HomeIcon,
@@ -166,7 +165,8 @@ export function Sidebar() {
               key={organization.id}
               value={organization.id}
               selected={
-                data && data.user.settings.organization === organization.id
+                session &&
+                session.user.settings.organization === organization.id
               }
             >
               {organization.name}
@@ -181,7 +181,7 @@ export function Sidebar() {
         </Link>
       </div>
       <div className="border-t border-slate-400 mx-4 mb-4" />
-      {data ? (
+      {session ? (
         <button
           className="bg-slate-600 mx-4 p-2 rounded-md hover:bg-slate-700"
           onClick={() => signOut()}
