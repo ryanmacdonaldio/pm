@@ -10,13 +10,24 @@ import { signIn, signOut } from 'next-auth/react';
 import Link from 'next/link';
 import { useState } from 'react';
 
-interface Link {
-  expanded?: boolean;
+type BaseLink = {
   icon?: (props: React.ComponentProps<'svg'>) => JSX.Element;
-  links?: Link[];
   text: string;
-  url?: string;
+  type: string;
+};
+
+interface URLLink extends BaseLink {
+  type: 'url';
+  url: string;
 }
+
+interface DropdownLink extends BaseLink {
+  type: 'dropdown';
+  expanded: boolean;
+  links: Link[];
+}
+
+type Link = URLLink | DropdownLink;
 
 interface Organization {
   id: number;
@@ -26,51 +37,62 @@ interface Organization {
 export function Sidebar({ session }: { session: Session }) {
   const [links, setLinks] = useState<Link[]>([
     {
+      type: 'url',
       icon: HomeIcon,
       text: 'Dashboard',
       url: '/',
     },
     {
+      type: 'dropdown',
       icon: BookOpenIcon,
       text: 'Projects',
       expanded: false,
       links: [
         {
+          type: 'url',
           text: 'All Projects',
           url: '/projects/all',
         },
         {
+          type: 'url',
           text: 'Add Project',
           url: '/projects/add',
         },
         {
+          type: 'url',
           text: 'My Projects',
           url: '/projects',
         },
         {
+          type: 'url',
           text: 'Archived Projects',
           url: '/projects/archive',
         },
       ],
     },
     {
+      type: 'dropdown',
       icon: BookmarkIcon,
       text: 'Tickets',
       expanded: false,
       links: [
         {
+          type: 'url',
           text: 'All Tickets',
           url: '/tickets/all',
         },
         {
+          type: 'url',
           text: 'Add Ticket',
           url: '/ticket/add',
         },
         {
+          type: 'url',
           text: 'My Tickets',
           url: '/tickets',
         },
         {
+          type: 'url',
           text: 'Archived Tickets',
           url: '/tickets/archive',
         },
@@ -103,7 +125,7 @@ export function Sidebar({ session }: { session: Session }) {
       <div className="border-t border-slate-400 mx-4 mb-4" />
       <ul className="mb-4 ml-3">
         {links.map((link, idx) => {
-          return link.links ? (
+          return link.type === 'dropdown' ? (
             <li key={link.text} className="mb-1 ml-1">
               <div
                 className="flex items-center mr-4 space-x-2 text-slate-300 hover:text-slate-100"
@@ -111,7 +133,7 @@ export function Sidebar({ session }: { session: Session }) {
                 onClick={() =>
                   setLinks(
                     links.map((check_link, check_idx) =>
-                      check_idx == idx
+                      check_link.type === 'dropdown' && check_idx == idx
                         ? { ...check_link, expanded: !check_link.expanded }
                         : check_link
                     )

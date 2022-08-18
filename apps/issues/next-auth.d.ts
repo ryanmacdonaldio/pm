@@ -6,7 +6,7 @@ interface Settings {
 
 declare module 'next-auth' {
   interface Session {
-    user?: {
+    user: {
       settings: Settings;
     } & DefaultSession['user'];
   }
