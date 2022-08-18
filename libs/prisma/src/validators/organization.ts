@@ -3,7 +3,7 @@ import { CompleteUsersInOrganization, RelatedUsersInOrganizationModel } from "./
 
 export const OrganizationModel = z.object({
   id: z.string(),
-  name: z.string(),
+  name: z.string().nonempty({ message: "Name is required" }),
   description: z.string().nullish(),
 })
 
