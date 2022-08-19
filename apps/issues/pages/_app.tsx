@@ -8,7 +8,7 @@ import './styles.css';
 
 function CustomApp({ Component, pageProps }: AppProps) {
   return (
-    <SessionProvider session={pageProps.session} refetchInterval={0}>
+    <SessionProvider session={pageProps.session}>
       <Component {...pageProps} />
     </SessionProvider>
   );
@@ -28,5 +28,5 @@ export default withTRPC<AppRouter>({
       url,
     };
   },
-  ssr: true,
+  ssr: false,
 })(CustomApp);
