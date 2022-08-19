@@ -161,7 +161,10 @@ export function Sidebar() {
       {session && organizations && organizations.length > 0 && (
         <div className="flex flex-col mb-4 mx-4 space-y-1">
           <span className="text-slate-50">Organization:</span>
-          <select className="text-slate-800 py-1">
+          <select
+            defaultValue={session.user.settings.organization ?? ''}
+            className="text-slate-800 py-1"
+          >
             {organizations.map((organization) => (
               <option key={organization.id} value={organization.id}>
                 {organization.name}
