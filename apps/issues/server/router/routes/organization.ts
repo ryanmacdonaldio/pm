@@ -5,7 +5,13 @@ import { createProtectedRouter } from '../protected-router';
 export const organizationRouter = createProtectedRouter()
   .query('getAll', {
     async resolve({ ctx }) {
-      const userOrganizations = await ctx.prisma.organization.findMany();
+      const userOrganizations = await ctx.prisma.organization.findMany({
+        where: {
+          UsersInOrganization: {
+            some: { userId: { equals: ctx.session.user.id } },
+          },
+        },
+      });
 
       return userOrganizations;
     },

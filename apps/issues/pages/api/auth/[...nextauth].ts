@@ -10,6 +10,7 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async session({ session, user }) {
       if (session.user) {
+        session.user.id = user.id;
         session.user.settings = user.settings;
       }
       return session;

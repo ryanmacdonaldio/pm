@@ -8,6 +8,7 @@ import {
 import { signIn, signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useState } from 'react';
+import { trpc } from '../utils/trpc';
 
 type BaseLink = {
   icon?: (props: React.ComponentProps<'svg'>) => JSX.Element;
@@ -28,13 +29,9 @@ interface DropdownLink extends BaseLink {
 
 type Link = URLLink | DropdownLink;
 
-interface Organization {
-  id: number;
-  name: string;
-}
-
 export function Sidebar() {
   const { data: session } = useSession();
+  const { data: organizations } = trpc.useQuery(['organization.getAll']);
 
   const [links, setLinks] = useState<Link[]>([
     {
@@ -101,25 +98,6 @@ export function Sidebar() {
     },
   ]);
 
-  const organizations: Organization[] = [
-    {
-      id: 1,
-      name: 'Organization 1',
-    },
-    {
-      id: 2,
-      name: 'Organization 2',
-    },
-    {
-      id: 3,
-      name: 'Organization 3',
-    },
-    {
-      id: 4,
-      name: 'Organization 4',
-    },
-  ];
-
   return (
     <aside className="bg-slate-800 flex flex-col h-screen py-4 sticky text-slate-200 top-0 w-48">
       <span className="font-mono mx-8 mb-4 text-3xl text-center">Issues</span>
@@ -180,29 +158,24 @@ export function Sidebar() {
       </ul>
       <div className="border-t border-slate-400 mx-4 mb-4" />
       <div className="flex-grow" />
-      <div className="flex flex-col mb-4 mx-4 space-y-1">
-        <span className="text-slate-50">Organization:</span>
-        <select className="text-slate-800 py-1">
-          {organizations.map((organization) => (
-            <option
-              key={organization.id}
-              value={organization.id}
-              selected={
-                session &&
-                session.user.settings.organization === organization.id
-              }
-            >
-              {organization.name}
-            </option>
-          ))}
-        </select>
-        <Link href="/organizations/add">
-          <button className="bg-slate-100 border-2 border-slate-400 flex items-center justify-center px-3 py-1 rounded-md space-x-2 text-slate-900 text-sm">
-            <PlusIcon className="h-3 w-3" />
-            <span>Create</span>
-          </button>
-        </Link>
-      </div>
+      {session && organizations && organizations.length > 0 && (
+        <div className="flex flex-col mb-4 mx-4 space-y-1">
+          <span className="text-slate-50">Organization:</span>
+          <select className="text-slate-800 py-1">
+            {organizations.map((organization) => (
+              <option key={organization.id} value={organization.id}>
+                {organization.name}
+              </option>
+            ))}
+          </select>
+          <Link href="/organizations/add">
+            <button className="bg-slate-100 border-2 border-slate-400 flex items-center justify-center px-3 py-1 rounded-md space-x-2 text-slate-900 text-sm">
+              <PlusIcon className="h-3 w-3" />
+              <span>Create</span>
+            </button>
+          </Link>
+        </div>
+      )}
       <div className="border-t border-slate-400 mx-4 mb-4" />
       {session ? (
         <button

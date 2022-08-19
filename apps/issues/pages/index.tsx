@@ -284,7 +284,11 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     };
   }
 
-  const organizations = await prisma.organization.findMany();
+  const organizations = await prisma.organization.findMany({
+    where: {
+      UsersInOrganization: { some: { userId: { equals: session.user.id } } },
+    },
+  });
 
   if (organizations.length === 0) {
     return {
