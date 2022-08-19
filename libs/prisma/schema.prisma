@@ -49,6 +49,10 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
+
+  settings Json @default("{}")
+
+  UsersInOrganization UsersInOrganization[]
 }
 
 model VerificationToken {
@@ -57,4 +61,22 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model Organization {
+  id                  String                @id @default(cuid())
+  /// @zod.nonempty({ message: "Name is required" })
+  name                String                @unique
+  description         String?
+  UsersInOrganization UsersInOrganization[]
+}
+
+model UsersInOrganization {
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  userId         String
+  user           User         @relation(fields: [userId], references: [id])
+  admin          Boolean      @default(false)
+
+  @@id([organizationId, userId])
 }
