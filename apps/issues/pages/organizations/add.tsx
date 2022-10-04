@@ -14,7 +14,7 @@ const FormSchema = OrganizationModel.omit({ id: true });
 type FormSchemaType = z.infer<typeof FormSchema>;
 
 function Add() {
-  const { isLoading, mutate } = trpc.useMutation('organization.add');
+  const { isLoading, mutate } = trpc.organization.add.useMutation();
   const {
     formState: { errors },
     handleSubmit,
@@ -56,6 +56,7 @@ function Add() {
               <button
                 type="submit"
                 className="bg-slate-400 font-medium px-4 py-2 rounded-md shadow-sm text-md text-slate-800 hover:bg-slate-500 hover:text-slate-900"
+                disabled={isLoading}
               >
                 Create
               </button>

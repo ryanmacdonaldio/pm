@@ -27,6 +27,4 @@ export const createContext = async (
   return await createContextInner({ session });
 };
 
-type Context = trpc.inferAsyncReturnType<typeof createContext>;
-
-export const createRouter = () => trpc.router<Context>();
+export type Context = trpc.inferAsyncReturnType<typeof createContext>;

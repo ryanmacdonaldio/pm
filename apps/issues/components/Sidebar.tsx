@@ -31,7 +31,7 @@ type Link = URLLink | DropdownLink;
 
 export function Sidebar() {
   const { data: session } = useSession();
-  const { data: organizations } = trpc.useQuery(['organization.getAll']);
+  const { data: organizations } = trpc.organization.getAll.useQuery();
 
   const [links, setLinks] = useState<Link[]>([
     {
