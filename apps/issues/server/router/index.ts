@@ -1,9 +1,8 @@
-import { createRouter } from './context';
+import { t } from '../trpc';
 import { organizationRouter } from './routes/organization';
 
-export const appRouter = createRouter().merge(
-  'organization.',
-  organizationRouter
-);
+export const appRouter = t.router({
+  organization: organizationRouter,
+});
 
 export type AppRouter = typeof appRouter;
