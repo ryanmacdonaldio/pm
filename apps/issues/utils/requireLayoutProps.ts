@@ -16,7 +16,11 @@ const requireLayoutProps =
       };
     }
 
-    const organizations = await prisma.organization.findMany();
+    const organizations = await prisma.organization.findMany({
+      where: {
+        UsersInOrganization: { some: { userId: { equals: session.user.id } } },
+      },
+    });
 
     const gsspProps = await gssp(ctx);
 
