@@ -1,3 +1,4 @@
+import { Organization } from '@prisma/client';
 import {
   ArrowRightIcon,
   BookmarkIcon,
@@ -5,10 +6,10 @@ import {
   HomeIcon,
   PlusIcon,
 } from '@heroicons/react/outline';
-import { signIn, signOut, useSession } from 'next-auth/react';
+import { signIn, signOut } from 'next-auth/react';
 import Link from 'next/link';
 import { useState } from 'react';
-import { trpc } from '../utils/trpc';
+import { Session } from 'next-auth';
 
 type BaseLink = {
   icon?: (props: React.ComponentProps<'svg'>) => JSX.Element;
@@ -29,10 +30,13 @@ interface DropdownLink extends BaseLink {
 
 type Link = URLLink | DropdownLink;
 
-export function Sidebar() {
-  const { data: session } = useSession();
-  const { data: organizations } = trpc.organization.getAll.useQuery();
-
+export function Sidebar({
+  organizations,
+  session,
+}: {
+  organizations: Organization[];
+  session: Session | null;
+}) {
   const [links, setLinks] = useState<Link[]>([
     {
       type: 'url',

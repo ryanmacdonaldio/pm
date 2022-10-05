@@ -1,9 +1,20 @@
+import { Organization } from '@prisma/client';
+import { Session } from 'next-auth';
+
 import { Sidebar } from './Sidebar';
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+export default function Layout({
+  children,
+  organizations,
+  session,
+}: {
+  children: React.ReactNode;
+  organizations: Organization[];
+  session: Session | null;
+}) {
   return (
     <div className="flex">
-      <Sidebar />
+      <Sidebar organizations={organizations} session={session} />
       <main className="bg-slate-200 flex-grow p-4">{children}</main>
     </div>
   );
