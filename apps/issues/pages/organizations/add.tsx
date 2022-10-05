@@ -1,13 +1,11 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { GetServerSidePropsContext } from 'next';
 import { OrganizationModel } from '@pm/prisma';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 import FormInput from '../../components/FormInput';
 import Layout from '../../components/Layout';
-import { getAuthSession } from '../../server/common/get-server-session';
-import { prisma } from '../../server/db/client';
+import requireLayoutProps from '../../utils/requireLayoutProps';
 import { trpc } from '../../utils/trpc';
 
 const FormSchema = OrganizationModel.omit({ id: true });
@@ -68,36 +66,8 @@ function Add() {
   );
 }
 
-export async function getServerSideProps(ctx: GetServerSidePropsContext) {
-  const session = await getAuthSession(ctx);
-
-  if (!session) {
-    return {
-      redirect: {
-        destination: '/api/auth/signin',
-      },
-    };
-  }
-
-  const organizations = await prisma.organization.findMany({
-    where: {
-      UsersInOrganization: { some: { userId: { equals: session.user.id } } },
-    },
-  });
-
-  if (organizations.length === 0) {
-    return {
-      redirect: {
-        destination: '/organizations/add',
-      },
-    };
-  }
-
-  return {
-    props: {
-      session,
-    },
-  };
-}
+export const getServerSideProps = requireLayoutProps(async (ctx) => {
+  return { props: {} };
+});
 
 export default Add;
