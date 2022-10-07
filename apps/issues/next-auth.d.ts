@@ -1,7 +1,7 @@
 import { DefaultSession } from 'next-auth';
 
 interface Settings {
-  organization?: number;
+  organization?: string;
 }
 
 declare module 'next-auth' {
