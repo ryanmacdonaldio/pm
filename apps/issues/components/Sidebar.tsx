@@ -25,7 +25,7 @@ interface URLLink extends BaseLink {
 interface DropdownLink extends BaseLink {
   type: 'dropdown';
   expanded: boolean;
-  links: Link[];
+  links: URLLink[];
 }
 
 type Link = URLLink | DropdownLink;
@@ -143,7 +143,7 @@ export function Sidebar({
                       className="ml-1 text-slate-300 hover:text-slate-100"
                       key={sublink.text}
                     >
-                      {sublink.text}
+                      <Link href={sublink.url}>{sublink.text}</Link>
                     </li>
                   );
                 })}
