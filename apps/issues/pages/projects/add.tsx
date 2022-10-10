@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ProjectModel } from '@pm/prisma';
+import { useRouter } from 'next/router';
 import { useForm } from 'react-hook-form';
 import type { SubmitHandler } from 'react-hook-form';
 import { z } from 'zod';
@@ -12,7 +13,8 @@ const FormSchema = ProjectModel.omit({ id: true, organizationId: true });
 type FormSchemaType = z.infer<typeof FormSchema>;
 
 function Add() {
-  const { mutate } = trpc.project.add.useMutation();
+  const router = useRouter();
+  const { mutateAsync } = trpc.project.add.useMutation();
 
   const {
     formState: { errors },
@@ -23,10 +25,12 @@ function Add() {
     resolver: zodResolver(FormSchema),
   });
 
-  const onSubmit: SubmitHandler<FormSchemaType> = (data) => {
-    mutate(data);
+  const onSubmit: SubmitHandler<FormSchemaType> = async (data) => {
+    const projectID = await mutateAsync(data);
 
     reset();
+
+    router.push(`/projects/${projectID}`);
   };
 
   return (
