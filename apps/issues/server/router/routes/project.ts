@@ -21,4 +21,13 @@ export const projectRouter = t.router({
 
       return project.id;
     }),
+  getAll: protectedProcedure.query(async ({ ctx }) => {
+    const projects = await ctx.prisma.project.findMany({
+      where: {
+        organizationId: { equals: ctx.session.user.settings.organization },
+      },
+    });
+
+    return projects;
+  }),
 });
