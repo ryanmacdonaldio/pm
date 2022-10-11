@@ -1,5 +1,5 @@
 import * as z from "zod"
-import { CompleteAccount, RelatedAccountModel, CompleteSession, RelatedSessionModel, CompleteUsersInOrganization, RelatedUsersInOrganizationModel } from "./index"
+import { CompleteAccount, RelatedAccountModel, CompleteSession, RelatedSessionModel, CompleteUsersInOrganization, RelatedUsersInOrganizationModel, CompleteTicket, RelatedTicketModel } from "./index"
 
 // Helper schema for JSON fields
 type Literal = boolean | number | string
@@ -20,6 +20,8 @@ export interface CompleteUser extends z.infer<typeof UserModel> {
   accounts: CompleteAccount[]
   sessions: CompleteSession[]
   UsersInOrganization: CompleteUsersInOrganization[]
+  TicketCreated: CompleteTicket[]
+  TicketAssigned: CompleteTicket[]
 }
 
 /**
@@ -31,4 +33,6 @@ export const RelatedUserModel: z.ZodSchema<CompleteUser> = z.lazy(() => UserMode
   accounts: RelatedAccountModel.array(),
   sessions: RelatedSessionModel.array(),
   UsersInOrganization: RelatedUsersInOrganizationModel.array(),
+  TicketCreated: RelatedTicketModel.array(),
+  TicketAssigned: RelatedTicketModel.array(),
 }))
