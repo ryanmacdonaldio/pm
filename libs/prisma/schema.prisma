@@ -53,6 +53,8 @@ model User {
   settings Json @default("{}")
 
   UsersInOrganization UsersInOrganization[]
+  TicketCreated       Ticket[]              @relation("created")
+  TicketAssigned      Ticket[]              @relation("assigned")
 }
 
 model VerificationToken {
@@ -64,12 +66,16 @@ model VerificationToken {
 }
 
 model Organization {
-  id                  String                @id @default(cuid())
+  id          String  @id @default(cuid())
   /// @zod.nonempty({ message: "Name is required" })
-  name                String                @unique
-  description         String?               @db.Text
+  name        String  @unique
+  description String? @db.Text
+
   UsersInOrganization UsersInOrganization[]
   Project             Project[]
+  TicketPriority      TicketPriority[]
+  TicketStatus        TicketStatus[]
+  TicketType          TicketType[]
 }
 
 model UsersInOrganization {
@@ -93,5 +99,63 @@ model Project {
   endDate        DateTime?    @db.Date()
   archived       Boolean      @default(false)
 
+  Ticket Ticket[]
+
   @@unique([organizationId, name])
+}
+
+model Ticket {
+  id          String   @id @default(cuid())
+  projectId   String
+  project     Project  @relation(fields: [projectId], references: [id])
+  /// @zod.nonempty({ message: "Title is required" })
+  title       String
+  /// @zod.nonempty({ message: "Description is required" })
+  description String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
+  archived    Boolean  @default(false)
+  creatorId   String
+  creator     User     @relation("created", fields: [creatorId], references: [id])
+  assignedId  String?
+  assigned    User?    @relation("assigned", fields: [assignedId], references: [id])
+
+  ticketPriorityId String?
+  ticketPriority   TicketPriority? @relation(fields: [ticketPriorityId], references: [id])
+  ticketStatusId   String?
+  ticketStatus     TicketStatus?   @relation(fields: [ticketStatusId], references: [id])
+  ticketTypeId     String?
+  TicketType       TicketType?     @relation(fields: [ticketTypeId], references: [id])
+
+  @@unique([projectId, title])
+}
+
+model TicketPriority {
+  id             String       @id @default(cuid())
+  /// @zod.nonempty({ message: "Value is required" })
+  value          String
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  Ticket Ticket[]
+}
+
+model TicketStatus {
+  id             String       @id @default(cuid())
+  /// @zod.nonempty({ message: "Value is required" })
+  value          String
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  Ticket Ticket[]
+}
+
+model TicketType {
+  id             String       @id @default(cuid())
+  /// @zod.nonempty({ message: "Value is required" })
+  value          String
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  Ticket Ticket[]
 }
