@@ -1,5 +1,5 @@
 import * as z from "zod"
-import { CompleteUsersInOrganization, RelatedUsersInOrganizationModel } from "./index"
+import { CompleteUsersInOrganization, RelatedUsersInOrganizationModel, CompleteProject, RelatedProjectModel } from "./index"
 
 export const OrganizationModel = z.object({
   id: z.string(),
@@ -9,6 +9,7 @@ export const OrganizationModel = z.object({
 
 export interface CompleteOrganization extends z.infer<typeof OrganizationModel> {
   UsersInOrganization: CompleteUsersInOrganization[]
+  Project: CompleteProject[]
 }
 
 /**
@@ -18,4 +19,5 @@ export interface CompleteOrganization extends z.infer<typeof OrganizationModel> 
  */
 export const RelatedOrganizationModel: z.ZodSchema<CompleteOrganization> = z.lazy(() => OrganizationModel.extend({
   UsersInOrganization: RelatedUsersInOrganizationModel.array(),
+  Project: RelatedProjectModel.array(),
 }))
