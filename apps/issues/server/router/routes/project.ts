@@ -1,4 +1,5 @@
 import { ProjectModel } from '@pm/prisma';
+import { z } from 'zod';
 
 import { protectedProcedure } from '../protected-procedure';
 import { t } from '../../trpc';
@@ -20,6 +21,15 @@ export const projectRouter = t.router({
       });
 
       return project.id;
+    }),
+  get: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const project = await ctx.prisma.project.findUnique({
+        where: { id: input.id },
+      });
+
+      return project;
     }),
   getAll: protectedProcedure.query(async ({ ctx }) => {
     const projects = await ctx.prisma.project.findMany({
