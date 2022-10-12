@@ -1,17 +1,26 @@
 import { FieldError, UseFormRegisterReturn } from 'react-hook-form';
 
+type ListValue = {
+  id: string;
+  value: string;
+};
+
 type FormInputProps = {
   className?: string;
+  defaultListValue?: string;
   error: FieldError | undefined;
   label: string;
+  listValues?: ListValue[];
   register: UseFormRegisterReturn;
   type: string;
 };
 
 function FormInput({
   className,
+  defaultListValue,
   error,
   label,
+  listValues,
   register,
   type,
 }: FormInputProps) {
@@ -21,6 +30,37 @@ function FormInput({
         return (
           <div className="flex mt-1">
             <input type="checkbox" className="h-5 ml-1 w-5" {...register} />
+          </div>
+        );
+      case 'list':
+        return listValues ? (
+          <div className="flex mt-1">
+            <select
+              defaultValue={
+                defaultListValue
+                  ? listValues
+                      .map((listValue) => listValue.id)
+                      .includes(defaultListValue)
+                    ? defaultListValue
+                    : ''
+                  : ''
+              }
+              className="block border border-slate-300 flex-1 outline-none px-3 py-2 rounded-none rounded-r-md w-full"
+              {...register}
+            >
+              <option value="" disabled>
+                Select a {label.toLowerCase()}...
+              </option>
+              {listValues.map((listValue) => (
+                <option key={listValue.id} value={listValue.id}>
+                  {listValue.value}
+                </option>
+              ))}
+            </select>
+          </div>
+        ) : (
+          <div className="bg-white block border border-slate-300 flex-1 mt-1 outline-none px-3 py-2 rounded-none rounded-r-md w-full">
+            listValues required!
           </div>
         );
       case 'textarea':

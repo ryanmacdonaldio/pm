@@ -86,7 +86,7 @@ export function Sidebar({
         {
           type: 'url',
           text: 'Add Ticket',
-          url: '/ticket/add',
+          url: '/tickets/add',
         },
         {
           type: 'url',
