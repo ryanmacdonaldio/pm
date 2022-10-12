@@ -9,8 +9,8 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
-import { ProjectList } from '../components/ProjectList';
 
+import { ProjectList } from '../components/ProjectList';
 import requireLayoutProps from '../utils/requireLayoutProps';
 import { trpc } from '../utils/trpc';
 

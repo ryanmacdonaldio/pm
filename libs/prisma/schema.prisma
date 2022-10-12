@@ -136,6 +136,7 @@ model TicketPriority {
   value          String
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id])
+  colour         String
 
   Ticket Ticket[]
 }
@@ -146,6 +147,7 @@ model TicketStatus {
   value          String
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id])
+  colour         String
 
   Ticket Ticket[]
 }
@@ -156,6 +158,7 @@ model TicketType {
   value          String
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id])
+  colour         String
 
   Ticket Ticket[]
 }
