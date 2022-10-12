@@ -6,6 +6,7 @@ export const TicketStatusModel = z.object({
   value: z.string().nonempty({ message: "Value is required" }),
   organizationId: z.string(),
   colour: z.string(),
+  rank: z.number().int(),
 })
 
 export interface CompleteTicketStatus extends z.infer<typeof TicketStatusModel> {
