@@ -3,7 +3,7 @@ import { CompleteProject, RelatedProjectModel, CompleteUser, RelatedUserModel, C
 
 export const TicketModel = z.object({
   id: z.string(),
-  projectId: z.string(),
+  projectId: z.string().nonempty({ message: "Please choose a project" }),
   title: z.string().nonempty({ message: "Title is required" }),
   description: z.string().nonempty({ message: "Description is required" }),
   createdAt: z.date(),
