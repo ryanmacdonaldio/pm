@@ -1,5 +1,5 @@
 import { InformationCircleIcon } from '@heroicons/react/outline';
-import { ProjectModel } from '@pm/prisma';
+import { Project } from '@prisma/client';
 import {
   createColumnHelper,
   flexRender,
@@ -7,9 +7,6 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import Link from 'next/link';
-import { z } from 'zod';
-
-type Project = z.infer<typeof ProjectModel>;
 
 export function ProjectList({
   isLoading,
