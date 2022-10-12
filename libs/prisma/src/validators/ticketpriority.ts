@@ -11,7 +11,7 @@ export const TicketPriorityModel = z.object({
 
 export interface CompleteTicketPriority extends z.infer<typeof TicketPriorityModel> {
   organization: CompleteOrganization
-  Ticket: CompleteTicket[]
+  tickets: CompleteTicket[]
 }
 
 /**
@@ -21,5 +21,5 @@ export interface CompleteTicketPriority extends z.infer<typeof TicketPriorityMod
  */
 export const RelatedTicketPriorityModel: z.ZodSchema<CompleteTicketPriority> = z.lazy(() => TicketPriorityModel.extend({
   organization: RelatedOrganizationModel,
-  Ticket: RelatedTicketModel.array(),
+  tickets: RelatedTicketModel.array(),
 }))

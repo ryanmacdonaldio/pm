@@ -8,11 +8,11 @@ export const OrganizationModel = z.object({
 })
 
 export interface CompleteOrganization extends z.infer<typeof OrganizationModel> {
-  UsersInOrganization: CompleteUsersInOrganization[]
-  Project: CompleteProject[]
-  TicketPriority: CompleteTicketPriority[]
-  TicketStatus: CompleteTicketStatus[]
-  TicketType: CompleteTicketType[]
+  usersInOrganization: CompleteUsersInOrganization[]
+  projects: CompleteProject[]
+  ticketPriorities: CompleteTicketPriority[]
+  ticketStatuses: CompleteTicketStatus[]
+  ticketTypes: CompleteTicketType[]
 }
 
 /**
@@ -21,9 +21,9 @@ export interface CompleteOrganization extends z.infer<typeof OrganizationModel> 
  * NOTE: Lazy required in case of potential circular dependencies within schema
  */
 export const RelatedOrganizationModel: z.ZodSchema<CompleteOrganization> = z.lazy(() => OrganizationModel.extend({
-  UsersInOrganization: RelatedUsersInOrganizationModel.array(),
-  Project: RelatedProjectModel.array(),
-  TicketPriority: RelatedTicketPriorityModel.array(),
-  TicketStatus: RelatedTicketStatusModel.array(),
-  TicketType: RelatedTicketTypeModel.array(),
+  usersInOrganization: RelatedUsersInOrganizationModel.array(),
+  projects: RelatedProjectModel.array(),
+  ticketPriorities: RelatedTicketPriorityModel.array(),
+  ticketStatuses: RelatedTicketStatusModel.array(),
+  ticketTypes: RelatedTicketTypeModel.array(),
 }))

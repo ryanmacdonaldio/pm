@@ -52,9 +52,9 @@ model User {
 
   settings Json @default("{}")
 
-  UsersInOrganization UsersInOrganization[]
-  TicketCreated       Ticket[]              @relation("created")
-  TicketAssigned      Ticket[]              @relation("assigned")
+  usersInOrganization UsersInOrganization[]
+  ticketsCreated      Ticket[]              @relation("created")
+  ticketsAssigned     Ticket[]              @relation("assigned")
 }
 
 model VerificationToken {
@@ -71,11 +71,11 @@ model Organization {
   name        String  @unique
   description String? @db.Text
 
-  UsersInOrganization UsersInOrganization[]
-  Project             Project[]
-  TicketPriority      TicketPriority[]
-  TicketStatus        TicketStatus[]
-  TicketType          TicketType[]
+  usersInOrganization UsersInOrganization[]
+  projects            Project[]
+  ticketPriorities    TicketPriority[]
+  ticketStatuses      TicketStatus[]
+  ticketTypes         TicketType[]
 }
 
 model UsersInOrganization {
@@ -99,7 +99,7 @@ model Project {
   endDate        DateTime?    @db.Date()
   archived       Boolean      @default(false)
 
-  Ticket Ticket[]
+  tickets Ticket[]
 
   @@unique([organizationId, name])
 }
@@ -140,7 +140,7 @@ model TicketPriority {
   colour         String       @default("black")
   rank           Int          @default(0)
 
-  Ticket Ticket[]
+  tickets Ticket[]
 }
 
 model TicketStatus {
@@ -152,7 +152,7 @@ model TicketStatus {
   colour         String       @default("black")
   rank           Int          @default(0)
 
-  Ticket Ticket[]
+  tickets Ticket[]
 }
 
 model TicketType {
@@ -164,5 +164,5 @@ model TicketType {
   colour         String       @default("black")
   rank           Int          @default(0)
 
-  Ticket Ticket[]
+  tickets Ticket[]
 }

@@ -19,9 +19,9 @@ export const UserModel = z.object({
 export interface CompleteUser extends z.infer<typeof UserModel> {
   accounts: CompleteAccount[]
   sessions: CompleteSession[]
-  UsersInOrganization: CompleteUsersInOrganization[]
-  TicketCreated: CompleteTicket[]
-  TicketAssigned: CompleteTicket[]
+  usersInOrganization: CompleteUsersInOrganization[]
+  ticketsCreated: CompleteTicket[]
+  ticketsAssigned: CompleteTicket[]
 }
 
 /**
@@ -32,7 +32,7 @@ export interface CompleteUser extends z.infer<typeof UserModel> {
 export const RelatedUserModel: z.ZodSchema<CompleteUser> = z.lazy(() => UserModel.extend({
   accounts: RelatedAccountModel.array(),
   sessions: RelatedSessionModel.array(),
-  UsersInOrganization: RelatedUsersInOrganizationModel.array(),
-  TicketCreated: RelatedTicketModel.array(),
-  TicketAssigned: RelatedTicketModel.array(),
+  usersInOrganization: RelatedUsersInOrganizationModel.array(),
+  ticketsCreated: RelatedTicketModel.array(),
+  ticketsAssigned: RelatedTicketModel.array(),
 }))

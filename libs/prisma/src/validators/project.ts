@@ -13,7 +13,7 @@ export const ProjectModel = z.object({
 
 export interface CompleteProject extends z.infer<typeof ProjectModel> {
   organization: CompleteOrganization
-  Ticket: CompleteTicket[]
+  tickets: CompleteTicket[]
 }
 
 /**
@@ -23,5 +23,5 @@ export interface CompleteProject extends z.infer<typeof ProjectModel> {
  */
 export const RelatedProjectModel: z.ZodSchema<CompleteProject> = z.lazy(() => ProjectModel.extend({
   organization: RelatedOrganizationModel,
-  Ticket: RelatedTicketModel.array(),
+  tickets: RelatedTicketModel.array(),
 }))
