@@ -26,6 +26,16 @@ export const projectRouter = t.router({
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
       const project = await ctx.prisma.project.findUnique({
+        include: {
+          tickets: {
+            include: {
+              assigned: true,
+              ticketPriority: true,
+              ticketStatus: true,
+              ticketType: true,
+            },
+          },
+        },
         where: { id: input.id },
       });
 

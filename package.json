@@ -15,7 +15,7 @@
     "@nrwl/next": "14.4.3",
     "@prisma/client": "^4.1.0",
     "@tanstack/react-query": "^4.6.0",
-    "@tanstack/react-table": "^8.5.11",
+    "@tanstack/react-table": "^8.5.15",
     "@trpc/client": "^10.0.0-proxy-beta.7",
     "@trpc/next": "^10.0.0-proxy-beta.7",
     "@trpc/react": "^10.0.0-proxy-beta.7",

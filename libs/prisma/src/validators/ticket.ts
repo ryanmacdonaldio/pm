@@ -22,7 +22,7 @@ export interface CompleteTicket extends z.infer<typeof TicketModel> {
   assigned?: CompleteUser | null
   ticketPriority?: CompleteTicketPriority | null
   ticketStatus?: CompleteTicketStatus | null
-  TicketType?: CompleteTicketType | null
+  ticketType?: CompleteTicketType | null
 }
 
 /**
@@ -36,5 +36,5 @@ export const RelatedTicketModel: z.ZodSchema<CompleteTicket> = z.lazy(() => Tick
   assigned: RelatedUserModel.nullish(),
   ticketPriority: RelatedTicketPriorityModel.nullish(),
   ticketStatus: RelatedTicketStatusModel.nullish(),
-  TicketType: RelatedTicketTypeModel.nullish(),
+  ticketType: RelatedTicketTypeModel.nullish(),
 }))

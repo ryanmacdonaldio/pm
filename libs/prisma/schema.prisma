@@ -126,7 +126,7 @@ model Ticket {
   ticketStatusId   String?
   ticketStatus     TicketStatus?   @relation(fields: [ticketStatusId], references: [id])
   ticketTypeId     String?
-  TicketType       TicketType?     @relation(fields: [ticketTypeId], references: [id])
+  ticketType       TicketType?     @relation(fields: [ticketTypeId], references: [id])
 
   @@unique([projectId, title])
 }
