@@ -41,6 +41,7 @@ export const projectRouter = t.router({
     }),
   getAll: protectedProcedure.query(async ({ ctx }) => {
     const projects = await ctx.prisma.project.findMany({
+      include: { tickets: true },
       where: {
         organizationId: { equals: ctx.session.user.settings.organization },
       },

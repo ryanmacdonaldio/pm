@@ -1,5 +1,5 @@
 import { InformationCircleIcon } from '@heroicons/react/outline';
-import { Project } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import {
   createColumnHelper,
   flexRender,
@@ -8,12 +8,14 @@ import {
 } from '@tanstack/react-table';
 import Link from 'next/link';
 
+type ProjectType = Prisma.ProjectGetPayload<{ include: { tickets: true } }>;
+
 export function ProjectList({
   isLoading,
   projects,
 }: {
   isLoading: boolean;
-  projects: Project[] | null | undefined;
+  projects: ProjectType[] | null | undefined;
 }) {
   const dateOptions: Intl.DateTimeFormatOptions = {
     day: 'numeric',
@@ -21,7 +23,7 @@ export function ProjectList({
     year: 'numeric',
   };
 
-  const columnHelper = createColumnHelper<Project>();
+  const columnHelper = createColumnHelper<ProjectType>();
   const columns = [
     columnHelper.accessor('name', {
       header: () => 'Name',
@@ -63,7 +65,9 @@ export function ProjectList({
     columnHelper.display({
       id: 'ticketCount',
       header: () => 'Ticket Count',
-      cell: () => <div></div>,
+      cell: (info) => (
+        <div className="text-center">{info.row.original.tickets.length}</div>
+      ),
     }),
     columnHelper.display({
       id: 'details',
