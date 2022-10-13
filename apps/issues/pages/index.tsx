@@ -54,6 +54,11 @@ function Index() {
     return project_data;
   });
 
+  const importantFilterIds =
+    ticketPriorities
+      ?.filter((priority) => priority.rank === ticketPriorities[0].rank)
+      .map((priority) => priority.id) ?? [];
+
   return (
     <div className="auto-rows-min gap-4 grid grid-cols-4">
       <div className="col-span-4 flex items-center justify-between px-2">
@@ -78,9 +83,15 @@ function Index() {
         </div>
       </div>
       <div className="items-center bg-slate-50 flex font-medium justify-between p-4 rounded-lg shadow-md">
-        <span className="text-xl">Urgent Tickets</span>
+        <span className="text-xl">Important Tickets</span>
         <div className="bg-red-200 border-2 border-red-800 rounded-full px-3 py-1 text-red-800">
-          0
+          {tickets && ticketPriorities && ticketPriorities.length > 0
+            ? tickets.filter(
+                (ticket) =>
+                  ticket.ticketPriorityId &&
+                  importantFilterIds.includes(ticket.ticketPriorityId)
+              ).length
+            : 0}
         </div>
       </div>
       <div className="items-center bg-slate-50 flex font-medium justify-between p-4 rounded-lg shadow-md">
