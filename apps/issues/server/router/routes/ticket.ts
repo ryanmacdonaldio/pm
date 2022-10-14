@@ -4,6 +4,7 @@ import {
   TicketStatusModel,
   TicketTypeModel,
 } from '@pm/prisma';
+import { z } from 'zod';
 
 import {
   protectedOrganizationProcedure,
@@ -27,6 +28,21 @@ export const ticketRouter = t.router({
       });
 
       return ticket.id;
+    }),
+  get: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const ticket = await ctx.prisma.ticket.findUnique({
+        include: {
+          project: true,
+          ticketPriority: true,
+          ticketStatus: true,
+          ticketType: true,
+        },
+        where: { id: input.id },
+      });
+
+      return ticket;
     }),
   getAll: protectedOrganizationProcedure.query(async ({ ctx }) => {
     const tickets = await ctx.prisma.ticket.findMany({
