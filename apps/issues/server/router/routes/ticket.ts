@@ -31,6 +31,7 @@ export const ticketRouter = t.router({
   getAll: protectedOrganizationProcedure.query(async ({ ctx }) => {
     const tickets = await ctx.prisma.ticket.findMany({
       include: {
+        project: true,
         ticketPriority: true,
         ticketStatus: true,
         ticketType: true,
