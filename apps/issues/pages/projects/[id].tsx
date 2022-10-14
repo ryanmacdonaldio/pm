@@ -99,10 +99,12 @@ function ProjectDetails() {
         <span className="font-medium text-2xl text-slate-900">
           {project.name}
         </span>
-        <button className="bg-blue-100 border-2 border-blue-400 flex items-center px-3 py-1 rounded-md space-x-2 text-blue-900">
-          <PlusIcon className="h-3 w-3" />
-          <span>Add Ticket</span>
-        </button>
+        <Link href={`/tickets/add?project_id=${id}`}>
+          <button className="bg-blue-100 border-2 border-blue-400 flex items-center px-3 py-1 rounded-md space-x-2 text-blue-900">
+            <PlusIcon className="h-3 w-3" />
+            <span>Add Ticket</span>
+          </button>
+        </Link>
       </div>
       <div className="col-span-1 flex flex-col space-y-4">
         <div className="bg-slate-50 p-4 rounded-lg shadow-md">

@@ -70,10 +70,12 @@ function Index() {
               <span>Add Project</span>
             </button>
           </Link>
-          <button className="bg-green-100 border-2 border-green-400 flex items-center px-3 py-1 rounded-md space-x-2 text-green-900">
-            <PlusIcon className="h-3 w-3" />
-            <span>Add Ticket</span>
-          </button>
+          <Link href="/tickets/add">
+            <button className="bg-green-100 border-2 border-green-400 flex items-center px-3 py-1 rounded-md space-x-2 text-green-900">
+              <PlusIcon className="h-3 w-3" />
+              <span>Add Ticket</span>
+            </button>
+          </Link>
         </div>
       </div>
       <div className="items-center bg-slate-50 flex font-medium justify-between p-4 rounded-lg shadow-md">
