@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import type { ParsedUrlQuery } from 'querystring';
 import { useEffect } from 'react';
@@ -34,7 +35,11 @@ function TicketDetails() {
     <div className="auto-rows-min gap-4 grid grid-cols-4">
       <div className="col-span-4 flex items-center justify-between px-2">
         <div className="flex space-x-2 text-2xl text-slate-900">
-          <span className="font-light ">{ticket.project.name}</span>
+          <Link href={`/projects/${ticket.projectId}`}>
+            <span className="cursor-pointer font-light">
+              {ticket.project.name}
+            </span>
+          </Link>
           <span className=" font-normal">&gt;</span>
           <span className=" font-medium">{ticket.title}</span>
         </div>
@@ -55,11 +60,35 @@ function TicketDetails() {
               {new Date(ticket.createdAt).toLocaleString('en-US', dateOptions)}
             </span>
             <span>Priority</span>
-            <span>{ticket.ticketPriority?.value}</span>
+            <div className="flex flex-row items-center space-x-2">
+              {ticket.ticketPriority && (
+                <div
+                  className="h-2 rounded-md w-2"
+                  style={{ backgroundColor: ticket.ticketPriority.colour }}
+                />
+              )}
+              <span>{ticket.ticketPriority?.value}</span>
+            </div>
             <span>Status</span>
-            <span>{ticket.ticketStatus?.value}</span>
+            <div className="flex flex-row items-center space-x-2">
+              {ticket.ticketStatus && (
+                <div
+                  className="h-2 rounded-md w-2"
+                  style={{ backgroundColor: ticket.ticketStatus.colour }}
+                />
+              )}
+              <span>{ticket.ticketStatus?.value}</span>
+            </div>
             <span>Type</span>
-            <span>{ticket.ticketType?.value}</span>
+            <div className="flex flex-row items-center space-x-2">
+              {ticket.ticketType && (
+                <div
+                  className="h-2 rounded-md w-2"
+                  style={{ backgroundColor: ticket.ticketType.colour }}
+                />
+              )}
+              <span>{ticket.ticketType?.value}</span>
+            </div>
           </div>
         </div>
       </div>

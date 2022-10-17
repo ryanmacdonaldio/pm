@@ -65,15 +65,63 @@ function ProjectDetails() {
     }),
     columnHelper.accessor('ticketPriority', {
       header: () => 'Priority',
-      cell: (info) => info.getValue()?.value ?? '',
+      cell: (info) => {
+        const data = info.getValue();
+
+        return data ? (
+          <div className="flex flex-row justify-center">
+            <div className="bg-slate-200 flex flex-row items-center px-2 space-x-2 rounded-md">
+              <div
+                className="h-2 rounded-md w-2"
+                style={{ backgroundColor: data.colour }}
+              />
+              <span>{data.value}</span>
+            </div>
+          </div>
+        ) : (
+          ''
+        );
+      },
     }),
     columnHelper.accessor('ticketStatus', {
       header: () => 'Status',
-      cell: (info) => info.getValue()?.value ?? '',
+      cell: (info) => {
+        const data = info.getValue();
+
+        return data ? (
+          <div className="flex flex-row justify-center">
+            <div className="bg-slate-200 flex flex-row items-center px-2 space-x-2 rounded-md">
+              <div
+                className="h-2 rounded-md w-2"
+                style={{ backgroundColor: data.colour }}
+              />
+              <span>{data.value}</span>
+            </div>
+          </div>
+        ) : (
+          ''
+        );
+      },
     }),
     columnHelper.accessor('ticketType', {
       header: () => 'Type',
-      cell: (info) => info.getValue()?.value ?? '',
+      cell: (info) => {
+        const data = info.getValue();
+
+        return data ? (
+          <div className="flex flex-row justify-center">
+            <div className="bg-slate-200 flex flex-row items-center px-2 space-x-2 rounded-md">
+              <div
+                className="h-2 rounded-md w-2"
+                style={{ backgroundColor: data.colour }}
+              />
+              <span>{data.value}</span>
+            </div>
+          </div>
+        ) : (
+          ''
+        );
+      },
     }),
     columnHelper.display({
       id: 'details',
