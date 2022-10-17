@@ -35,7 +35,7 @@ export const organizationRouter = t.router({
   getAll: protectedProcedure.query(async ({ ctx }) => {
     const userOrganizations = await ctx.prisma.organization.findMany({
       where: {
-        UsersInOrganization: {
+        usersInOrganization: {
           some: { userId: { equals: ctx.session.user.id } },
         },
       },

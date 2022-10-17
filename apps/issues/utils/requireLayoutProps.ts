@@ -18,7 +18,7 @@ const requireLayoutProps =
 
     const organizations = await prisma.organization.findMany({
       where: {
-        UsersInOrganization: { some: { userId: { equals: session.user.id } } },
+        usersInOrganization: { some: { userId: { equals: session.user.id } } },
       },
     });
 

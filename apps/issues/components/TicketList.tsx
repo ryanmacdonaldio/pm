@@ -1,5 +1,5 @@
 import { InformationCircleIcon } from '@heroicons/react/outline';
-import { Prisma } from '@prisma/client';
+import { Prisma, Ticket } from '@prisma/client';
 import {
   createColumnHelper,
   flexRender,
@@ -8,14 +8,21 @@ import {
 } from '@tanstack/react-table';
 import Link from 'next/link';
 
-type ProjectType = Prisma.ProjectGetPayload<{ include: { tickets: true } }>;
+type TicketType = Prisma.TicketGetPayload<{
+  include: {
+    project: true;
+    ticketPriority: true;
+    ticketStatus: true;
+    ticketType: true;
+  };
+}>;
 
-export function ProjectList({
+export function TicketList({
   isLoading,
-  projects,
+  tickets,
 }: {
   isLoading: boolean;
-  projects: ProjectType[] | null | undefined;
+  tickets: TicketType[] | null | undefined;
 }) {
   const dateOptions: Intl.DateTimeFormatOptions = {
     day: 'numeric',
@@ -23,16 +30,20 @@ export function ProjectList({
     year: 'numeric',
   };
 
-  const columnHelper = createColumnHelper<ProjectType>();
+  const columnHelper = createColumnHelper<TicketType>();
   const columns = [
-    columnHelper.accessor('name', {
-      header: () => 'Name',
+    columnHelper.accessor('title', {
+      header: () => 'Title',
       cell: (info) => <div className="pl-1">{info.getValue()}</div>,
     }),
-    columnHelper.accessor('startDate', {
-      header: () => 'Start Date',
+    columnHelper.accessor('project.name', {
+      header: () => 'Project',
+      cell: (info) => <div className="text-center">{info.getValue()}</div>,
+    }),
+    columnHelper.accessor('createdAt', {
+      header: () => 'Created',
       cell: (info) => {
-        const date = info.getValue();
+        const date = new Date(info.getValue());
 
         return (
           <div className="text-center">
@@ -43,36 +54,28 @@ export function ProjectList({
         );
       },
     }),
-    columnHelper.accessor('endDate', {
-      header: () => 'End Date',
-      cell: (info) => {
-        const date = info.getValue();
-
-        return (
-          <div className="text-center">
-            {typeof date === 'undefined' || date === null
-              ? ''
-              : date.toLocaleString('en-US', dateOptions)}
-          </div>
-        );
-      },
-    }),
-    columnHelper.display({
-      id: 'team',
-      header: () => 'Team',
-      cell: () => <div></div>,
-    }),
-    columnHelper.display({
-      id: 'ticketCount',
-      header: () => 'Ticket Count',
+    columnHelper.accessor('ticketPriority', {
+      header: () => 'Priority',
       cell: (info) => (
-        <div className="text-center">{info.row.original.tickets.length}</div>
+        <div className="text-center">{info.getValue()?.value ?? ''}</div>
+      ),
+    }),
+    columnHelper.accessor('ticketStatus', {
+      header: () => 'Status',
+      cell: (info) => (
+        <div className="text-center">{info.getValue()?.value ?? ''}</div>
+      ),
+    }),
+    columnHelper.accessor('ticketType', {
+      header: () => 'Type',
+      cell: (info) => (
+        <div className="text-center">{info.getValue()?.value ?? ''}</div>
       ),
     }),
     columnHelper.display({
       id: 'details',
       cell: (info) => (
-        <Link href={`/projects/${info.row.original.id}`}>
+        <Link href={`/tickets/${info.row.original.id}`}>
           <InformationCircleIcon className="h-5 mx-auto w-5 hover:cursor-pointer" />
         </Link>
       ),
@@ -81,7 +84,7 @@ export function ProjectList({
 
   const table = useReactTable({
     columns,
-    data: projects ?? [],
+    data: tickets ?? [],
     getCoreRowModel: getCoreRowModel(),
   });
 
@@ -107,9 +110,9 @@ export function ProjectList({
           <tr className="border-b">
             <td className="px-2 py-1">Loading...</td>
           </tr>
-        ) : projects?.length === 0 ? (
+        ) : tickets?.length === 0 ? (
           <tr className="border-b">
-            <td className="px-2 py-1">No Projects Found</td>
+            <td className="px-2 py-1">No Tickets Found</td>
           </tr>
         ) : (
           table.getRowModel().rows.map((row) => (

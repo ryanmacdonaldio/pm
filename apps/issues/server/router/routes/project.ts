@@ -1,18 +1,16 @@
 import { ProjectModel } from '@pm/prisma';
 import { z } from 'zod';
 
-import { protectedProcedure } from '../protected-procedure';
+import {
+  protectedProcedure,
+  protectedOrganizationProcedure,
+} from '../protected-procedure';
 import { t } from '../../trpc';
-import { TRPCError } from '@trpc/server';
 
 export const projectRouter = t.router({
-  add: protectedProcedure
+  add: protectedOrganizationProcedure
     .input(ProjectModel.omit({ id: true, organizationId: true }))
     .mutation(async ({ ctx, input }) => {
-      if (typeof ctx.session.user.settings.organization === 'undefined') {
-        throw new TRPCError({ code: 'PRECONDITION_FAILED' });
-      }
-
       const project = await ctx.prisma.project.create({
         data: {
           ...input,
@@ -26,6 +24,16 @@ export const projectRouter = t.router({
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
       const project = await ctx.prisma.project.findUnique({
+        include: {
+          tickets: {
+            include: {
+              assigned: true,
+              ticketPriority: true,
+              ticketStatus: true,
+              ticketType: true,
+            },
+          },
+        },
         where: { id: input.id },
       });
 
@@ -33,6 +41,7 @@ export const projectRouter = t.router({
     }),
   getAll: protectedProcedure.query(async ({ ctx }) => {
     const projects = await ctx.prisma.project.findMany({
+      include: { tickets: true },
       where: {
         organizationId: { equals: ctx.session.user.settings.organization },
       },

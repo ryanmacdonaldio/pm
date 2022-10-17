@@ -86,7 +86,7 @@ export function Sidebar({
         {
           type: 'url',
           text: 'Add Ticket',
-          url: '/ticket/add',
+          url: '/tickets/add',
         },
         {
           type: 'url',
@@ -97,6 +97,11 @@ export function Sidebar({
           type: 'url',
           text: 'Archived Tickets',
           url: '/tickets/archive',
+        },
+        {
+          type: 'url',
+          text: 'Ticket Settings',
+          url: '/tickets/settings',
         },
       ],
     },
@@ -134,7 +139,7 @@ export function Sidebar({
               </div>
               <ul
                 className={`${
-                  link.expanded ? 'max-h-24' : 'max-h-0'
+                  link.expanded ? 'max-h-64' : 'max-h-0'
                 } duration-500 overflow-hidden transition-all`}
               >
                 {link.links.map((sublink) => {

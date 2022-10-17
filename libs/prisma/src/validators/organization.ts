@@ -1,5 +1,5 @@
 import * as z from "zod"
-import { CompleteUsersInOrganization, RelatedUsersInOrganizationModel, CompleteProject, RelatedProjectModel } from "./index"
+import { CompleteUsersInOrganization, RelatedUsersInOrganizationModel, CompleteProject, RelatedProjectModel, CompleteTicketPriority, RelatedTicketPriorityModel, CompleteTicketStatus, RelatedTicketStatusModel, CompleteTicketType, RelatedTicketTypeModel } from "./index"
 
 export const OrganizationModel = z.object({
   id: z.string(),
@@ -8,8 +8,11 @@ export const OrganizationModel = z.object({
 })
 
 export interface CompleteOrganization extends z.infer<typeof OrganizationModel> {
-  UsersInOrganization: CompleteUsersInOrganization[]
-  Project: CompleteProject[]
+  usersInOrganization: CompleteUsersInOrganization[]
+  projects: CompleteProject[]
+  ticketPriorities: CompleteTicketPriority[]
+  ticketStatuses: CompleteTicketStatus[]
+  ticketTypes: CompleteTicketType[]
 }
 
 /**
@@ -18,6 +21,9 @@ export interface CompleteOrganization extends z.infer<typeof OrganizationModel> 
  * NOTE: Lazy required in case of potential circular dependencies within schema
  */
 export const RelatedOrganizationModel: z.ZodSchema<CompleteOrganization> = z.lazy(() => OrganizationModel.extend({
-  UsersInOrganization: RelatedUsersInOrganizationModel.array(),
-  Project: RelatedProjectModel.array(),
+  usersInOrganization: RelatedUsersInOrganizationModel.array(),
+  projects: RelatedProjectModel.array(),
+  ticketPriorities: RelatedTicketPriorityModel.array(),
+  ticketStatuses: RelatedTicketStatusModel.array(),
+  ticketTypes: RelatedTicketTypeModel.array(),
 }))

@@ -16,3 +16,29 @@ const isLoggedIn = t.middleware(async ({ ctx, next }) => {
 });
 
 export const protectedProcedure = t.procedure.use(isLoggedIn);
+
+const hasOrganization = t.middleware(async ({ ctx, next }) => {
+  if (typeof ctx.session?.user.settings.organization === 'undefined') {
+    throw new TRPCError({ code: 'PRECONDITION_FAILED' });
+  }
+
+  return next({
+    ctx: {
+      ...ctx,
+      session: {
+        ...ctx.session,
+        user: {
+          ...ctx.session.user,
+          settings: {
+            ...ctx.session.user.settings,
+            organization: ctx.session.user.settings.organization,
+          },
+        },
+      },
+    },
+  });
+});
+
+export const protectedOrganizationProcedure = t.procedure
+  .use(isLoggedIn)
+  .use(hasOrganization);
