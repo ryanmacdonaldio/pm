@@ -55,6 +55,7 @@ model User {
   usersInOrganization UsersInOrganization[]
   ticketsCreated      Ticket[]              @relation("created")
   ticketsAssigned     Ticket[]              @relation("assigned")
+  UsersInProject      UsersInProject[]
 }
 
 model VerificationToken {
@@ -100,8 +101,19 @@ model Project {
   archived       Boolean      @default(false)
 
   tickets Ticket[]
+  team    UsersInProject[]
 
   @@unique([organizationId, name])
+}
+
+model UsersInProject {
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id])
+  userId    String
+  user      User    @relation(fields: [userId], references: [id])
+  manager   Boolean @default(false)
+
+  @@id([projectId, userId])
 }
 
 model Ticket {
