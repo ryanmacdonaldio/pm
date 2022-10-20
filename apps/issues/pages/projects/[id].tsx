@@ -1,4 +1,9 @@
-import { InformationCircleIcon, PlusIcon } from '@heroicons/react/outline';
+import {
+  InformationCircleIcon,
+  PlusIcon,
+  TrashIcon,
+} from '@heroicons/react/outline';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Prisma } from '@prisma/client';
 import {
   createColumnHelper,
@@ -9,14 +14,23 @@ import {
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import type { ParsedUrlQuery } from 'querystring';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import type { SubmitHandler } from 'react-hook-form';
+import { z } from 'zod';
 
+import Modal from '../../components/Modal';
 import requireLayoutProps from '../../utils/requireLayoutProps';
 import { trpc } from '../../utils/trpc';
 
 interface QParams extends ParsedUrlQuery {
   id: string;
 }
+
+const FormSchema = z.object({
+  user: z.string().min(1, 'Please select a user'),
+});
+type FormSchemaType = z.infer<typeof FormSchema>;
 
 function ProjectDetails() {
   const dateOptions: Intl.DateTimeFormatOptions = {
@@ -28,7 +42,23 @@ function ProjectDetails() {
   const router = useRouter();
   const { id } = router.query as QParams;
 
+  const { mutateAsync: addUser } = trpc.project.addUser.useMutation();
   const { data: project, isLoading } = trpc.project.get.useQuery({ id });
+  const { data: users } = trpc.project.getUsers.useQuery({ id });
+  const { mutateAsync: removeUser } = trpc.project.removeUser.useMutation();
+  const { data: organizationUsers } = trpc.user.getAll.useQuery();
+  const utils = trpc.useContext();
+
+  const {
+    formState: { errors },
+    handleSubmit,
+    register,
+    reset,
+  } = useForm<FormSchemaType>({
+    resolver: zodResolver(FormSchema),
+  });
+
+  const [showModal, setShowModal] = useState<boolean>(false);
 
   useEffect(() => {
     if (router && !isLoading && !project) {
@@ -139,6 +169,22 @@ function ProjectDetails() {
     getCoreRowModel: getCoreRowModel(),
   });
 
+  const onSubmit: SubmitHandler<FormSchemaType> = async (data) => {
+    await addUser({ project: id, ...data });
+
+    utils.project.getUsers.invalidate({ id });
+
+    setShowModal(false);
+
+    reset();
+  };
+
+  const removeOnClick = async (user: string) => {
+    await removeUser({ project: id, user });
+
+    utils.project.getUsers.invalidate({ id });
+  };
+
   return isLoading || !project ? (
     <div>Loading...</div>
   ) : (
@@ -176,7 +222,36 @@ function ProjectDetails() {
           </div>
         </div>
         <div className="bg-slate-50 col-span-1 p-4 rounded-lg shadow-md">
-          <span className="font-medium text-xl text-slate-900">Team</span>
+          <div className="flex flex-row justify-between">
+            <span className="font-medium text-xl text-slate-900">Team</span>
+            <button
+              className="bg-green-100 border-2 border-green-400 flex items-center px-2 rounded-md space-x-1 text-green-900"
+              onClick={() => setShowModal(true)}
+            >
+              <PlusIcon className="h-3 w-3" />
+              <span>Add</span>
+            </button>
+          </div>
+          <div className="mt-2">
+            {!users || users.length === 0 ? (
+              <span className="font-light italic text-slate-900">
+                No Team Members Found
+              </span>
+            ) : (
+              users.map((user) => (
+                <div
+                  key={user.id}
+                  className="flex flex-row items-center justify-between"
+                >
+                  <span>{user.email}</span>
+                  <TrashIcon
+                    className="cursor-pointer h-5 text-red-700 w-5"
+                    onClick={() => removeOnClick(user.id)}
+                  />
+                </div>
+              ))
+            )}
+          </div>
         </div>
       </div>
       <div className="bg-slate-50 col-span-3 p-4 rounded-lg shadow-md">
@@ -223,6 +298,38 @@ function ProjectDetails() {
           </tbody>
         </table>
       </div>
+      <Modal setShow={setShowModal} show={showModal}>
+        <div className="flex flex-row justify-between w-full">
+          <span className="font-medium text-xl text-slate-900">Add User</span>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <div className="flex flex-row space-x-2">
+              {errors.user && (
+                <pre className="mr-1 text-red-700">{errors.user.message}</pre>
+              )}
+              <select
+                className="block border border-slate-300 flex-1 outline-none px-2 rounded-none rounded-r-md"
+                defaultValue={''}
+                {...register('user')}
+              >
+                <option value="" disabled>
+                  Select a user...
+                </option>
+                {organizationUsers?.map((user) => (
+                  <option key={user.id} value={user.id}>
+                    {user.email}
+                  </option>
+                ))}
+              </select>
+              <button
+                className="bg-slate-100 border-2 border-slate-300 px-2 rounded-md"
+                type="submit"
+              >
+                Add
+              </button>
+            </div>
+          </form>
+        </div>
+      </Modal>
     </div>
   );
 }
