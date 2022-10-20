@@ -28,7 +28,7 @@ interface QParams extends ParsedUrlQuery {
 }
 
 const FormSchema = z.object({
-  user: z.string(),
+  user: z.string().min(1, 'Please select a user'),
 });
 type FormSchemaType = z.infer<typeof FormSchema>;
 
@@ -49,7 +49,12 @@ function ProjectDetails() {
   const { data: organizationUsers } = trpc.user.getAll.useQuery();
   const utils = trpc.useContext();
 
-  const { handleSubmit, register, reset } = useForm<FormSchemaType>({
+  const {
+    formState: { errors },
+    handleSubmit,
+    register,
+    reset,
+  } = useForm<FormSchemaType>({
     resolver: zodResolver(FormSchema),
   });
 
@@ -298,6 +303,9 @@ function ProjectDetails() {
           <span className="font-medium text-xl text-slate-900">Add User</span>
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-row space-x-2">
+              {errors.user && (
+                <pre className="mr-1 text-red-700">{errors.user.message}</pre>
+              )}
               <select
                 className="block border border-slate-300 flex-1 outline-none px-2 rounded-none rounded-r-md"
                 defaultValue={''}

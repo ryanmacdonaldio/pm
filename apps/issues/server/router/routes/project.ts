@@ -21,7 +21,7 @@ export const projectRouter = t.router({
       return project.id;
     }),
   addUser: protectedProcedure
-    .input(z.object({ user: z.string(), project: z.string() }))
+    .input(z.object({ user: z.string().min(1), project: z.string() }))
     .mutation(async ({ ctx, input }) => {
       await ctx.prisma.usersInProject.create({
         data: { projectId: input.project, userId: input.user },
