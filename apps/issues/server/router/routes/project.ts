@@ -20,6 +20,13 @@ export const projectRouter = t.router({
 
       return project.id;
     }),
+  addUser: protectedProcedure
+    .input(z.object({ user: z.string(), project: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      await ctx.prisma.usersInProject.create({
+        data: { projectId: input.project, userId: input.user },
+      });
+    }),
   get: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
@@ -49,4 +56,13 @@ export const projectRouter = t.router({
 
     return projects;
   }),
+  getUsers: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const users = await ctx.prisma.user.findMany({
+        where: { UsersInProject: { some: { projectId: input.id } } },
+      });
+
+      return users;
+    }),
 });
