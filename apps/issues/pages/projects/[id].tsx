@@ -45,10 +45,11 @@ function ProjectDetails() {
   const { mutateAsync: addUser } = trpc.project.addUser.useMutation();
   const { data: project, isLoading } = trpc.project.get.useQuery({ id });
   const { data: users } = trpc.project.getUsers.useQuery({ id });
+  const { mutateAsync: removeUser } = trpc.project.removeUser.useMutation();
   const { data: organizationUsers } = trpc.user.getAll.useQuery();
   const utils = trpc.useContext();
 
-  const { handleSubmit, register } = useForm<FormSchemaType>({
+  const { handleSubmit, register, reset } = useForm<FormSchemaType>({
     resolver: zodResolver(FormSchema),
   });
 
@@ -169,6 +170,14 @@ function ProjectDetails() {
     utils.project.getUsers.invalidate({ id });
 
     setShowModal(false);
+
+    reset();
+  };
+
+  const removeOnClick = async (user: string) => {
+    await removeUser({ project: id, user });
+
+    utils.project.getUsers.invalidate({ id });
   };
 
   return isLoading || !project ? (
@@ -230,7 +239,10 @@ function ProjectDetails() {
                   className="flex flex-row items-center justify-between"
                 >
                   <span>{user.email}</span>
-                  <TrashIcon className="h-5 text-red-700 w-5" />
+                  <TrashIcon
+                    className="cursor-pointer h-5 text-red-700 w-5"
+                    onClick={() => removeOnClick(user.id)}
+                  />
                 </div>
               ))
             )}

@@ -65,4 +65,13 @@ export const projectRouter = t.router({
 
       return users;
     }),
+  removeUser: protectedProcedure
+    .input(z.object({ user: z.string(), project: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      await ctx.prisma.usersInProject.delete({
+        where: {
+          projectId_userId: { projectId: input.project, userId: input.user },
+        },
+      });
+    }),
 });
