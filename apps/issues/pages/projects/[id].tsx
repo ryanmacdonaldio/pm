@@ -9,8 +9,9 @@ import {
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import type { ParsedUrlQuery } from 'querystring';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
+import Modal from '../../components/Modal';
 import requireLayoutProps from '../../utils/requireLayoutProps';
 import { trpc } from '../../utils/trpc';
 
@@ -29,6 +30,9 @@ function ProjectDetails() {
   const { id } = router.query as QParams;
 
   const { data: project, isLoading } = trpc.project.get.useQuery({ id });
+  const { data: organizationUsers } = trpc.user.getAll.useQuery();
+
+  const [showModal, setShowModal] = useState<boolean>(false);
 
   useEffect(() => {
     if (router && !isLoading && !project) {
@@ -176,7 +180,16 @@ function ProjectDetails() {
           </div>
         </div>
         <div className="bg-slate-50 col-span-1 p-4 rounded-lg shadow-md">
-          <span className="font-medium text-xl text-slate-900">Team</span>
+          <div className="flex flex-row justify-between">
+            <span className="font-medium text-xl text-slate-900">Team</span>
+            <button
+              className="bg-green-100 border-2 border-green-400 flex items-center px-2 rounded-md space-x-1 text-green-900"
+              onClick={() => setShowModal(true)}
+            >
+              <PlusIcon className="h-3 w-3" />
+              <span>Add</span>
+            </button>
+          </div>
         </div>
       </div>
       <div className="bg-slate-50 col-span-3 p-4 rounded-lg shadow-md">
@@ -223,6 +236,29 @@ function ProjectDetails() {
           </tbody>
         </table>
       </div>
+      <Modal setShow={setShowModal} show={showModal}>
+        <div className="flex flex-row justify-between w-full">
+          <span className="font-medium text-xl text-slate-900">Add User</span>
+          <div className="flex flex-row space-x-2">
+            <select
+              className="block border border-slate-300 flex-1 outline-none px-2 rounded-none rounded-r-md"
+              defaultValue={''}
+            >
+              <option value="" disabled>
+                Select a user...
+              </option>
+              {organizationUsers?.map((user) => (
+                <option key={user.id} value={user.id}>
+                  {user.email}
+                </option>
+              ))}
+            </select>
+            <button className="bg-slate-100 border-2 border-slate-300 px-2 rounded-md">
+              Add
+            </button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }
