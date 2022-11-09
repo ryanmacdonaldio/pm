@@ -6,9 +6,18 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table';
+import Image from 'next/image';
 import Link from 'next/link';
 
-type ProjectType = Prisma.ProjectGetPayload<{ include: { tickets: true } }>;
+type ProjectType = Prisma.ProjectGetPayload<{
+  include: { team: { include: { user: true } }; tickets: true };
+}>;
+
+const ProfileImage = ({ src, user }: { src?: string; user: string }) => {
+  return (
+    <Image src={src ?? '/profile.jpg'} alt={user} height="32" width="32" />
+  );
+};
 
 export function ProjectList({
   isLoading,
@@ -57,10 +66,15 @@ export function ProjectList({
         );
       },
     }),
-    columnHelper.display({
-      id: 'team',
+    columnHelper.accessor('team', {
       header: () => 'Team',
-      cell: () => <div></div>,
+      cell: (info) => (
+        <div className="team-avatars">
+          {info.getValue().map(({ user }) => (
+            <ProfileImage key={user.id} user={user.name ?? user.id} />
+          ))}
+        </div>
+      ),
     }),
     columnHelper.display({
       id: 'ticketCount',
@@ -109,7 +123,11 @@ export function ProjectList({
           </tr>
         ) : projects?.length === 0 ? (
           <tr className="border-b">
-            <td className="px-2 py-1">No Projects Found</td>
+            <td className="px-2 py-1">
+              <span className="font-light italic text-slate-900">
+                No Projects Found
+              </span>
+            </td>
           </tr>
         ) : (
           table.getRowModel().rows.map((row) => (
