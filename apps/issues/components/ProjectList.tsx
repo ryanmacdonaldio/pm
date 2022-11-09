@@ -6,9 +6,18 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table';
+import Image from 'next/image';
 import Link from 'next/link';
 
-type ProjectType = Prisma.ProjectGetPayload<{ include: { tickets: true } }>;
+type ProjectType = Prisma.ProjectGetPayload<{
+  include: { tickets: true };
+}>;
+
+const ProfileImage = ({ src, user }: { src?: string; user: string }) => {
+  return (
+    <Image src={src ?? '/profile.jpg'} alt={user} height="32" width="32" />
+  );
+};
 
 export function ProjectList({
   isLoading,
@@ -60,7 +69,12 @@ export function ProjectList({
     columnHelper.display({
       id: 'team',
       header: () => 'Team',
-      cell: () => <div></div>,
+      cell: () => (
+        <div className="team-avatars">
+          <ProfileImage user="Ryan" />
+          <ProfileImage user="Ryan" />
+        </div>
+      ),
     }),
     columnHelper.display({
       id: 'ticketCount',

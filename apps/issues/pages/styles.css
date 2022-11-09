@@ -1,3 +1,13 @@
 @tailwind components;
 @tailwind base;
 @tailwind utilities;
+
+.team-avatars {
+  @apply flex flex-row items-center justify-center;
+}
+
+.team-avatars > span {
+  @apply rounded-full;
+
+  margin-left: -12px !important;
+}
