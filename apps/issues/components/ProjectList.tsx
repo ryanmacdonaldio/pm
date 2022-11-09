@@ -109,7 +109,11 @@ export function ProjectList({
           </tr>
         ) : projects?.length === 0 ? (
           <tr className="border-b">
-            <td className="px-2 py-1">No Projects Found</td>
+            <td className="px-2 py-1">
+              <span className="font-light italic text-slate-900">
+                No Projects Found
+              </span>
+            </td>
           </tr>
         ) : (
           table.getRowModel().rows.map((row) => (
