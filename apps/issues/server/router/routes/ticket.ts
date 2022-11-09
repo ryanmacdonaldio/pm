@@ -61,6 +61,36 @@ export const ticketRouter = t.router({
 
     return tickets;
   }),
+  getUserAssignedTickets: protectedProcedure.query(async ({ ctx }) => {
+    const tickets = await ctx.prisma.ticket.findMany({
+      include: {
+        project: true,
+        ticketPriority: true,
+        ticketStatus: true,
+        ticketType: true,
+      },
+      where: {
+        assignedId: { equals: ctx.session.user.id },
+      },
+    });
+
+    return tickets;
+  }),
+  getUserSubmittedTickets: protectedProcedure.query(async ({ ctx }) => {
+    const tickets = await ctx.prisma.ticket.findMany({
+      include: {
+        project: true,
+        ticketPriority: true,
+        ticketStatus: true,
+        ticketType: true,
+      },
+      where: {
+        creatorId: { equals: ctx.session.user.id },
+      },
+    });
+
+    return tickets;
+  }),
   priority: t.router({
     add: protectedOrganizationProcedure
       .input(TicketPriorityModel.omit({ id: true, organizationId: true }))

@@ -1,5 +1,5 @@
 import { InformationCircleIcon } from '@heroicons/react/outline';
-import { Prisma, Ticket } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import {
   createColumnHelper,
   flexRender,
@@ -112,7 +112,11 @@ export function TicketList({
           </tr>
         ) : tickets?.length === 0 ? (
           <tr className="border-b">
-            <td className="px-2 py-1">No Tickets Found</td>
+            <td className="px-2 py-1">
+              <span className="font-light italic text-slate-900">
+                No Tickets Found
+              </span>
+            </td>
           </tr>
         ) : (
           table.getRowModel().rows.map((row) => (
