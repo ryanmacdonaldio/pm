@@ -56,21 +56,63 @@ export function TicketList({
     }),
     columnHelper.accessor('ticketPriority', {
       header: () => 'Priority',
-      cell: (info) => (
-        <div className="text-center">{info.getValue()?.value ?? ''}</div>
-      ),
+      cell: (info) => {
+        const ticketPriority = info.getValue();
+
+        return ticketPriority ? (
+          <div className="flex flex-row items-center justify-center space-x-2">
+            {ticketPriority && (
+              <div
+                className="h-2 rounded-md w-2"
+                style={{ backgroundColor: ticketPriority.colour }}
+              />
+            )}
+            <span>{ticketPriority.value}</span>
+          </div>
+        ) : (
+          ''
+        );
+      },
     }),
     columnHelper.accessor('ticketStatus', {
       header: () => 'Status',
-      cell: (info) => (
-        <div className="text-center">{info.getValue()?.value ?? ''}</div>
-      ),
+      cell: (info) => {
+        const ticketStatus = info.getValue();
+
+        return ticketStatus ? (
+          <div className="flex flex-row items-center justify-center space-x-2">
+            {ticketStatus && (
+              <div
+                className="h-2 rounded-md w-2"
+                style={{ backgroundColor: ticketStatus.colour }}
+              />
+            )}
+            <span>{ticketStatus.value}</span>
+          </div>
+        ) : (
+          ''
+        );
+      },
     }),
     columnHelper.accessor('ticketType', {
       header: () => 'Type',
-      cell: (info) => (
-        <div className="text-center">{info.getValue()?.value ?? ''}</div>
-      ),
+      cell: (info) => {
+        const ticketType = info.getValue();
+
+        return ticketType ? (
+          <div className="flex flex-row items-center justify-center space-x-2">
+            {ticketType && (
+              <div
+                className="h-2 rounded-md w-2"
+                style={{ backgroundColor: ticketType.colour }}
+              />
+            )}
+            <span>{ticketType.value}</span>
+          </div>
+        ) : (
+          ''
+        );
+      },
     }),
     columnHelper.display({
       id: 'details',
