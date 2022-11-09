@@ -54,8 +54,6 @@ export const projectRouter = t.router({
       },
     });
 
-    console.log(projects);
-
     return projects;
   }),
   getUserProjects: protectedProcedure.query(async ({ ctx, input }) => {

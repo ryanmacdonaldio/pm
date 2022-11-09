@@ -42,10 +42,6 @@ function Add() {
     resolver: zodResolver(FormSchema),
   });
 
-  useEffect(() => {
-    console.log(errors);
-  }, [errors]);
-
   const onSubmit: SubmitHandler<FormSchemaType> = async (data) => {
     const ticketID = await mutateAsync(data);
 
