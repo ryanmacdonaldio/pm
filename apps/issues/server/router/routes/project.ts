@@ -48,17 +48,19 @@ export const projectRouter = t.router({
     }),
   getAll: protectedProcedure.query(async ({ ctx }) => {
     const projects = await ctx.prisma.project.findMany({
-      include: { tickets: true },
+      include: { team: { include: { user: true } }, tickets: true },
       where: {
         organizationId: { equals: ctx.session.user.settings.organization },
       },
     });
 
+    console.log(projects);
+
     return projects;
   }),
   getUserProjects: protectedProcedure.query(async ({ ctx, input }) => {
     const projects = await ctx.prisma.project.findMany({
-      include: { tickets: true },
+      include: { team: { include: { user: true } }, tickets: true },
       where: {
         team: { some: { userId: { equals: ctx.session.user.id } } },
       },

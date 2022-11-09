@@ -9,5 +9,6 @@
 .team-avatars > span {
   @apply rounded-full;
 
+  border: 1px solid black !important;
   margin-left: -12px !important;
 }

@@ -10,7 +10,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 type ProjectType = Prisma.ProjectGetPayload<{
-  include: { tickets: true };
+  include: { team: { include: { user: true } }; tickets: true };
 }>;
 
 const ProfileImage = ({ src, user }: { src?: string; user: string }) => {
@@ -66,13 +66,13 @@ export function ProjectList({
         );
       },
     }),
-    columnHelper.display({
-      id: 'team',
+    columnHelper.accessor('team', {
       header: () => 'Team',
-      cell: () => (
+      cell: (info) => (
         <div className="team-avatars">
-          <ProfileImage user="Ryan" />
-          <ProfileImage user="Ryan" />
+          {info.getValue().map(({ user }) => (
+            <ProfileImage key={user.id} user={user.name ?? user.id} />
+          ))}
         </div>
       ),
     }),
