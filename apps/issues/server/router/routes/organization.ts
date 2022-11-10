@@ -1,5 +1,7 @@
 import { OrganizationModel } from '@pm/prisma';
 import { Prisma } from '@prisma/client';
+import { TRPCError } from '@trpc/server';
+import z from 'zod';
 
 import { protectedProcedure } from '../protected-procedure';
 import { t } from '../../trpc';
@@ -31,6 +33,27 @@ export const organizationRouter = t.router({
       });
 
       return organization.id;
+    }),
+  change: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const organization = await ctx.prisma.organization.findUnique({
+        where: { id: input.id },
+      });
+
+      if (!organization) {
+        throw new TRPCError({ code: 'BAD_REQUEST' });
+      }
+
+      await ctx.prisma.user.update({
+        data: {
+          settings: {
+            ...ctx.session.user.settings,
+            organization: organization.id,
+          } as Prisma.InputJsonValue,
+        },
+        where: { id: ctx.session.user.id },
+      });
     }),
   getAll: protectedProcedure.query(async ({ ctx }) => {
     const userOrganizations = await ctx.prisma.organization.findMany({

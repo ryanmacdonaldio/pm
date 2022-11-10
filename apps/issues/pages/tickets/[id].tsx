@@ -24,7 +24,6 @@ function TicketDetails() {
 
   useEffect(() => {
     if (router && !isLoading && !ticket) {
-      console.log(ticket);
       router.push('/');
     }
   }, [isLoading, router, ticket]);

@@ -6,10 +6,13 @@ import {
   HomeIcon,
   PlusIcon,
 } from '@heroicons/react/outline';
-import { signIn, signOut } from 'next-auth/react';
 import Link from 'next/link';
-import { useState } from 'react';
 import { Session } from 'next-auth';
+import { signIn, signOut } from 'next-auth/react';
+import { ChangeEvent, useState } from 'react';
+
+import { trpc } from '../utils/trpc';
+import Router from 'next/router';
 
 type BaseLink = {
   icon?: (props: React.ComponentProps<'svg'>) => JSX.Element;
@@ -37,6 +40,14 @@ export function Sidebar({
   organizations: Organization[];
   session: Session | null;
 }) {
+  const { mutateAsync } = trpc.organization.change.useMutation();
+
+  const changeOrganization = async (event: ChangeEvent<HTMLSelectElement>) => {
+    await mutateAsync({ id: event.target.value });
+
+    Router.reload();
+  };
+
   const [links, setLinks] = useState<Link[]>([
     {
       type: 'url',
@@ -173,6 +184,7 @@ export function Sidebar({
           <select
             defaultValue={session.user.settings.organization ?? ''}
             className="text-slate-800 py-1"
+            onChange={changeOrganization}
           >
             {organizations.map((organization) => (
               <option key={organization.id} value={organization.id}>
