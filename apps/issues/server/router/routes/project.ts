@@ -84,4 +84,16 @@ export const projectRouter = t.router({
         },
       });
     }),
+  update: protectedProcedure
+    .input(ProjectModel.omit({ name: true, organizationId: true }))
+    .mutation(async ({ ctx, input }) => {
+      const { id, ...data } = input;
+
+      await ctx.prisma.project.update({
+        data,
+        where: {
+          id,
+        },
+      });
+    }),
 });

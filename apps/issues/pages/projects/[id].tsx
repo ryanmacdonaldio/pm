@@ -20,6 +20,7 @@ import type { SubmitHandler } from 'react-hook-form';
 import { z } from 'zod';
 
 import Modal from '../../components/Modal';
+import ProjectDetails from '../../components/ProjectDetails';
 import requireLayoutProps from '../../utils/requireLayoutProps';
 import { trpc } from '../../utils/trpc';
 
@@ -32,7 +33,7 @@ const FormSchema = z.object({
 });
 type FormSchemaType = z.infer<typeof FormSchema>;
 
-function ProjectDetails() {
+function ProjectPage() {
   const dateOptions: Intl.DateTimeFormatOptions = {
     day: '2-digit',
     month: 'long',
@@ -201,26 +202,7 @@ function ProjectDetails() {
         </Link>
       </div>
       <div className="col-span-1 flex flex-col space-y-4">
-        <div className="bg-slate-50 p-4 rounded-lg shadow-md">
-          <span className="font-medium text-xl text-slate-900">
-            Project Details
-          </span>
-          <div
-            className="grid mx-2 my-2 space-y-1"
-            style={{ gridTemplateColumns: '1fr 3fr' }}
-          >
-            <span>Start Date</span>
-            <span>
-              {project.startDate?.toLocaleString('en-US', dateOptions) ?? ''}
-            </span>
-            <span>End Date</span>
-            <span>
-              {project.endDate?.toLocaleString('en-US', dateOptions) ?? ''}
-            </span>
-            <span>Description</span>
-            <span>{project.description}</span>
-          </div>
-        </div>
+        <ProjectDetails project={project} />
         <div className="bg-slate-50 col-span-1 p-4 rounded-lg shadow-md">
           <div className="flex flex-row justify-between">
             <span className="font-medium text-xl text-slate-900">Team</span>
@@ -338,4 +320,4 @@ export const getServerSideProps = requireLayoutProps(async (ctx) => {
   return { props: {} };
 });
 
-export default ProjectDetails;
+export default ProjectPage;
