@@ -14,11 +14,12 @@ import {
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import type { ParsedUrlQuery } from 'querystring';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import type { SubmitHandler } from 'react-hook-form';
 import { z } from 'zod';
 
+import Head from '../../components/Head';
 import Modal from '../../components/Modal';
 import ProjectDetails from '../../components/ProjectDetails';
 import requireLayoutProps from '../../utils/requireLayoutProps';
@@ -204,6 +205,7 @@ function ProjectPage() {
     <div>Loading...</div>
   ) : (
     <div className="auto-rows-min gap-4 grid grid-cols-4">
+      <Head title={`${project.name}`} />
       <div className="col-span-4 flex items-center justify-between px-2">
         <span className="font-medium text-2xl text-slate-900">
           {project.name}

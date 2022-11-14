@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import type { ParsedUrlQuery } from 'querystring';
 import { useEffect } from 'react';
 
+import Head from '../../components/Head';
 import requireLayoutProps from '../../utils/requireLayoutProps';
 import { trpc } from '../../utils/trpc';
 
@@ -32,6 +33,7 @@ function TicketDetails() {
     <div>Loading...</div>
   ) : (
     <div className="auto-rows-min gap-4 grid grid-cols-4">
+      <Head title={`${ticket.project.name} > ${ticket.title}`} />
       <div className="col-span-4 flex items-center justify-between px-2">
         <div className="flex space-x-2 text-2xl text-slate-900">
           <Link href={`/projects/${ticket.projectId}`}>
