@@ -1,4 +1,6 @@
 import { PencilIcon, TrashIcon } from '@heroicons/react/outline';
+
+import Head from '../../components/Head';
 import { TicketSettingsForm } from '../../components/TicketSettingsForm';
 import requireLayoutProps from '../../utils/requireLayoutProps';
 import { trpc } from '../../utils/trpc';
@@ -10,6 +12,7 @@ function Settings() {
 
   return (
     <div className="auto-rows-min gap-4 grid grid-cols-4">
+      <Head title="Ticket Settings" />
       <div className="col-span-4 flex items-center justify-between px-2">
         <span className="font-medium text-2xl text-slate-900">
           Ticket Settings

@@ -1,6 +1,7 @@
 import { PlusIcon } from '@heroicons/react/outline';
 import Link from 'next/link';
 
+import Head from '../../components/Head';
 import { ProjectList } from '../../components/ProjectList';
 import requireLayoutProps from '../../utils/requireLayoutProps';
 import { trpc } from '../../utils/trpc';
@@ -10,6 +11,7 @@ function Index() {
 
   return (
     <div className="auto-rows-min gap-4 grid grid-cols-4">
+      <Head title="My Projects" />
       <div className="col-span-4 flex items-center justify-between px-2">
         <span className="font-medium text-2xl text-slate-900">My Projects</span>
         <Link href="/projects/add">

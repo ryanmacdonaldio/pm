@@ -6,6 +6,7 @@ import type { SubmitHandler } from 'react-hook-form';
 import { z } from 'zod';
 
 import FormInput from '../../components/FormInput';
+import Head from '../../components/Head';
 import requireLayoutProps from '../../utils/requireLayoutProps';
 import { trpc } from '../../utils/trpc';
 
@@ -35,6 +36,7 @@ function Add() {
 
   return (
     <div className="bg-slate-200 h-screen pt-4">
+      <Head title="Add Project" />
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="bg-slate-50 mx-auto rounded-md shadow-md w-2/3">
           <div className="col-span-3 border-b font-medium p-4 text-slate-700 text-xl w-full">
