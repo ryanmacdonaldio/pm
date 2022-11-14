@@ -4,7 +4,7 @@ import {
   TrashIcon,
 } from '@heroicons/react/outline';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Prisma } from '@prisma/client';
+import { Prisma, User } from '@prisma/client';
 import {
   createColumnHelper,
   flexRender,
@@ -14,7 +14,7 @@ import {
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import type { ParsedUrlQuery } from 'querystring';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import type { SubmitHandler } from 'react-hook-form';
 import { z } from 'zod';
@@ -60,12 +60,26 @@ function ProjectPage() {
   });
 
   const [showModal, setShowModal] = useState<boolean>(false);
+  const [addableUsers, setAddableUsers] = useState<User[] | undefined>([]);
+  const [addButtonColour, setAddButtonColour] = useState<string>('gray');
 
   useEffect(() => {
     if (router && !isLoading && !project) {
       router.push('/');
     }
   }, [isLoading, project, router]);
+
+  useEffect(() => {
+    const userIds = users?.map((user) => user.id);
+
+    setAddableUsers(
+      organizationUsers?.filter((user) => !userIds?.includes(user.id))
+    );
+
+    setAddButtonColour(
+      addableUsers && addableUsers.length > 0 ? 'green' : 'gray'
+    );
+  }, [addableUsers, addButtonColour, organizationUsers, users]);
 
   const columnHelper = createColumnHelper<
     Prisma.TicketGetPayload<{
@@ -207,7 +221,8 @@ function ProjectPage() {
           <div className="flex flex-row justify-between">
             <span className="font-medium text-xl text-slate-900">Team</span>
             <button
-              className="bg-green-100 border-2 border-green-400 flex items-center px-2 rounded-md space-x-1 text-green-900"
+              className={`bg-${addButtonColour}-100 border-2 border-${addButtonColour}-400 flex items-center px-2 rounded-md space-x-1 text-${addButtonColour}-900`}
+              disabled={addableUsers?.length == 0}
               onClick={() => setShowModal(true)}
             >
               <PlusIcon className="h-3 w-3" />
@@ -296,7 +311,7 @@ function ProjectPage() {
                 <option value="" disabled>
                   Select a user...
                 </option>
-                {organizationUsers?.map((user) => (
+                {addableUsers?.map((user) => (
                   <option key={user.id} value={user.id}>
                     {user.email}
                   </option>
