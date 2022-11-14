@@ -1,9 +1,11 @@
 import Head from 'next/head';
 
 function HeadComponent({ title }: { title: string }) {
+  const message = `Issues - ${title}`;
+
   return (
     <Head>
-      <title>Issues - {title}</title>
+      <title>{message}</title>
     </Head>
   );
 }
