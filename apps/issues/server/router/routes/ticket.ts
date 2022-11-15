@@ -35,7 +35,10 @@ export const ticketRouter = t.router({
     .query(async ({ ctx, input }) => {
       const ticket = await ctx.prisma.ticket.findUnique({
         include: {
-          comments: true,
+          comments: {
+            include: { creator: true },
+            orderBy: [{ createdAt: 'desc' }],
+          },
           project: true,
           ticketPriority: true,
           ticketStatus: true,
