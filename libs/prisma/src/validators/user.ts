@@ -1,5 +1,5 @@
 import * as z from "zod"
-import { CompleteAccount, RelatedAccountModel, CompleteSession, RelatedSessionModel, CompleteUsersInOrganization, RelatedUsersInOrganizationModel, CompleteTicket, RelatedTicketModel, CompleteUsersInProject, RelatedUsersInProjectModel } from "./index"
+import { CompleteAccount, RelatedAccountModel, CompleteSession, RelatedSessionModel, CompleteTicket, RelatedTicketModel, CompleteTicketComment, RelatedTicketCommentModel, CompleteUsersInOrganization, RelatedUsersInOrganizationModel, CompleteUsersInProject, RelatedUsersInProjectModel } from "./index"
 
 // Helper schema for JSON fields
 type Literal = boolean | number | string
@@ -19,10 +19,11 @@ export const UserModel = z.object({
 export interface CompleteUser extends z.infer<typeof UserModel> {
   accounts: CompleteAccount[]
   sessions: CompleteSession[]
-  usersInOrganization: CompleteUsersInOrganization[]
   ticketsCreated: CompleteTicket[]
   ticketsAssigned: CompleteTicket[]
-  UsersInProject: CompleteUsersInProject[]
+  comments: CompleteTicketComment[]
+  usersInOrganization: CompleteUsersInOrganization[]
+  usersInProject: CompleteUsersInProject[]
 }
 
 /**
@@ -33,8 +34,9 @@ export interface CompleteUser extends z.infer<typeof UserModel> {
 export const RelatedUserModel: z.ZodSchema<CompleteUser> = z.lazy(() => UserModel.extend({
   accounts: RelatedAccountModel.array(),
   sessions: RelatedSessionModel.array(),
-  usersInOrganization: RelatedUsersInOrganizationModel.array(),
   ticketsCreated: RelatedTicketModel.array(),
   ticketsAssigned: RelatedTicketModel.array(),
-  UsersInProject: RelatedUsersInProjectModel.array(),
+  comments: RelatedTicketCommentModel.array(),
+  usersInOrganization: RelatedUsersInOrganizationModel.array(),
+  usersInProject: RelatedUsersInProjectModel.array(),
 }))
