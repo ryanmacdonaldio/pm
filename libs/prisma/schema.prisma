@@ -55,6 +55,7 @@ model User {
   usersInOrganization UsersInOrganization[]
   ticketsCreated      Ticket[]              @relation("created")
   ticketsAssigned     Ticket[]              @relation("assigned")
+  TicketComments      TicketComment[]
   UsersInProject      UsersInProject[]
 }
 
@@ -140,7 +141,20 @@ model Ticket {
   ticketTypeId     String?
   ticketType       TicketType?     @relation(fields: [ticketTypeId], references: [id])
 
+  TicketComment TicketComment[]
+
   @@unique([projectId, title])
+}
+
+model TicketComment {
+  id        String   @id @default(cuid())
+  /// @zod.nonempty({ message: "Comment is required" })
+  comment   String
+  createdAt DateTime @default(now())
+  creatorId String
+  creator   User     @relation(fields: [creatorId], references: [id])
+  ticketId  String
+  ticket    Ticket   @relation(fields: [ticketId], references: [id])
 }
 
 model TicketPriority {
