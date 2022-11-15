@@ -52,11 +52,11 @@ model User {
 
   settings Json @default("{}")
 
-  usersInOrganization UsersInOrganization[]
   ticketsCreated      Ticket[]              @relation("created")
   ticketsAssigned     Ticket[]              @relation("assigned")
-  TicketComments      TicketComment[]
-  UsersInProject      UsersInProject[]
+  comments            TicketComment[]
+  usersInOrganization UsersInOrganization[]
+  usersInProject      UsersInProject[]
 }
 
 model VerificationToken {
@@ -141,7 +141,7 @@ model Ticket {
   ticketTypeId     String?
   ticketType       TicketType?     @relation(fields: [ticketTypeId], references: [id])
 
-  TicketComment TicketComment[]
+  comments TicketComment[]
 
   @@unique([projectId, title])
 }
