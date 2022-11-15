@@ -1,8 +1,13 @@
+import { zodResolver } from '@hookform/resolvers/zod';
+import { TicketCommentModel } from '@pm/prisma';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import type { ParsedUrlQuery } from 'querystring';
 import { useEffect } from 'react';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { z } from 'zod';
 
+import FormInput from '../../components/FormInput';
 import Head from '../../components/Head';
 import requireLayoutProps from '../../utils/requireLayoutProps';
 import { trpc } from '../../utils/trpc';
@@ -10,6 +15,14 @@ import { trpc } from '../../utils/trpc';
 interface QParams extends ParsedUrlQuery {
   id: string;
 }
+
+const FormSchema = TicketCommentModel.omit({
+  createdAt: true,
+  creatorId: true,
+  id: true,
+  ticketId: true,
+});
+type FormSchemaType = z.infer<typeof FormSchema>;
 
 function TicketDetails() {
   const dateOptions: Intl.DateTimeFormatOptions = {
@@ -22,12 +35,29 @@ function TicketDetails() {
   const { id } = router.query as QParams;
 
   const { data: ticket, isLoading } = trpc.ticket.get.useQuery({ id });
+  const { mutateAsync } = trpc.ticket.comment.add.useMutation();
+  const utils = trpc.useContext();
 
   useEffect(() => {
     if (router && !isLoading && !ticket) {
       router.push('/');
     }
   }, [isLoading, router, ticket]);
+
+  const {
+    formState: { errors },
+    handleSubmit,
+    register,
+    reset,
+  } = useForm<FormSchemaType>({ resolver: zodResolver(FormSchema) });
+
+  const onSubmit: SubmitHandler<FormSchemaType> = async (data) => {
+    await mutateAsync({ ...data, ticketId: id });
+
+    reset();
+
+    await utils.ticket.get.invalidate({ id });
+  };
 
   return isLoading || !ticket ? (
     <div>Loading...</div>
@@ -93,11 +123,60 @@ function TicketDetails() {
           </div>
         </div>
       </div>
-      <div className="bg-slate-50 col-span-2 p-4 rounded-lg shadow-md">
-        <span className="font-medium text-xl text-slate-900">History</span>
+      <div className="col-span-2">
+        <div className="bg-slate-50 p-4 rounded-lg shadow-md">
+          <span className="font-medium text-xl text-slate-900">History</span>
+        </div>
       </div>
-      <div className="bg-slate-50 col-span-1 p-4 rounded-lg shadow-md">
-        <span className="font-medium text-xl text-slate-900">Comments</span>
+      <div>
+        <div className="bg-slate-50 col-span-1 mb-4 p-4 rounded-lg shadow-md">
+          <span className="font-medium text-xl text-slate-900">
+            Add Comment
+          </span>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <div className="flex flex-col space-y-2">
+              <FormInput
+                className="w-full"
+                error={errors.comment}
+                label=""
+                register={register('comment')}
+                type="textarea"
+              />
+              <button
+                type="submit"
+                className="bg-slate-400 font-medium px-4 py-2 rounded-md shadow-sm text-md text-slate-800 hover:bg-slate-500 hover:text-slate-900"
+                disabled={isLoading}
+              >
+                Add
+              </button>
+            </div>
+          </form>
+        </div>
+        <div className="bg-slate-50 col-span-1 flex flex-col p-4 rounded-lg shadow-md space-y-2">
+          <span className="font-medium text-xl text-slate-900">Comments</span>
+          {ticket.comments?.length > 0 ? (
+            <div className="flex flex-col space-y-2">
+              {ticket.comments.map((comment) => {
+                const createdAt = new Date(comment.createdAt);
+                return (
+                  <div key={comment.id} className="flex flex-col">
+                    <div className="flex items-center justify-between space-x-2">
+                      <span>{comment.creator.name}</span>
+                      <span className="font-light italic text-sm text-slate-900">
+                        {createdAt.toLocaleString('en-US', dateOptions)}
+                      </span>
+                    </div>
+                    <div>{comment.comment}</div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <span className="font-light italic text-slate-900">
+              No Comments Found
+            </span>
+          )}
+        </div>
       </div>
     </div>
   );
