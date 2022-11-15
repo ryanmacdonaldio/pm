@@ -1,4 +1,5 @@
 import {
+  TicketCommentModel,
   TicketModel,
   TicketPriorityModel,
   TicketStatusModel,
@@ -34,6 +35,7 @@ export const ticketRouter = t.router({
     .query(async ({ ctx, input }) => {
       const ticket = await ctx.prisma.ticket.findUnique({
         include: {
+          comments: true,
           project: true,
           ticketPriority: true,
           ticketStatus: true,
@@ -90,6 +92,22 @@ export const ticketRouter = t.router({
     });
 
     return tickets;
+  }),
+  comment: t.router({
+    add: protectedProcedure
+      .input(
+        TicketCommentModel.omit({ createdAt: true, creatorId: true, id: true })
+      )
+      .mutation(async ({ ctx, input }) => {
+        const ticketComment = await ctx.prisma.ticketComment.create({
+          data: {
+            ...input,
+            creatorId: ctx.session.user.id,
+          },
+        });
+
+        return ticketComment;
+      }),
   }),
   priority: t.router({
     add: protectedOrganizationProcedure
