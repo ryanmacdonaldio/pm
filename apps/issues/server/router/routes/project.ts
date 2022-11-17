@@ -70,7 +70,7 @@ export const projectRouter = t.router({
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
       const users = await ctx.prisma.user.findMany({
-        where: { UsersInProject: { some: { projectId: input.id } } },
+        where: { usersInProject: { some: { projectId: input.id } } },
       });
 
       return users;
