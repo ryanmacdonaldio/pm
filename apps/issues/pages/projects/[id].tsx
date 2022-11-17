@@ -76,11 +76,13 @@ function ProjectPage() {
     setAddableUsers(
       organizationUsers?.filter((user) => !userIds?.includes(user.id))
     );
+  }, [organizationUsers, users]);
 
+  useEffect(() => {
     setAddButtonColour(
       addableUsers && addableUsers.length > 0 ? 'green' : 'gray'
     );
-  }, [addableUsers, addButtonColour, organizationUsers, users]);
+  }, [addableUsers, setAddButtonColour]);
 
   const columnHelper = createColumnHelper<
     Prisma.TicketGetPayload<{
