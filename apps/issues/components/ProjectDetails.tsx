@@ -5,6 +5,7 @@ import { Project } from '@prisma/client';
 import { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
+
 import { trpc } from '../utils/trpc';
 
 const FormSchema = ProjectModel.omit({
@@ -30,13 +31,11 @@ export default function ProjectDetails({ project }: { project: Project }) {
     handleSubmit,
     register,
     reset,
-    setValue,
   } = useForm<FormSchemaType>({
     defaultValues: {
-      description: project.description,
+      ...project,
       startDate: project.startDate ?? undefined,
       endDate: project.endDate ?? undefined,
-      archived: project.archived,
     },
     resolver: zodResolver(FormSchema),
   });
@@ -57,7 +56,7 @@ export default function ProjectDetails({ project }: { project: Project }) {
         </span>
         {edit ? (
           <button
-            className="bg-red-100 border-2 border-red-400 flex items-center px-2 rounded-md space-x-1 text-red-900"
+            className="bg-red-100 border-2 border-red-400 flex h-8 items-center px-2 rounded-md space-x-1 text-red-900"
             onClick={() => {
               setEdit(false);
               reset();
@@ -67,7 +66,7 @@ export default function ProjectDetails({ project }: { project: Project }) {
           </button>
         ) : (
           <button
-            className="bg-blue-100 border-2 border-blue-400 flex items-center px-2 rounded-md space-x-1 text-blue-900"
+            className="bg-blue-100 border-2 border-blue-400 flex h-8 items-center px-2 rounded-md space-x-1 text-blue-900"
             onClick={() => setEdit(true)}
           >
             <PencilIcon className="h-3 w-3" />
@@ -75,7 +74,7 @@ export default function ProjectDetails({ project }: { project: Project }) {
           </button>
         )}
       </div>
-      <form className="project-details-form" onSubmit={handleSubmit(onSubmit)}>
+      <form className="details-form" onSubmit={handleSubmit(onSubmit)}>
         <div>
           <span>Start Date</span>
           {edit ? (

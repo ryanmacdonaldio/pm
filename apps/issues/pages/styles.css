@@ -2,21 +2,21 @@
 @tailwind base;
 @tailwind utilities;
 
-.project-details-form {
+.details-form {
   @apply flex flex-col px-1;
 }
 
-.project-details-form > div {
+.details-form > div {
   @apply flex flex-row items-center justify-between mt-1 space-x-2;
 
   min-height: 2.5rem;
 }
 
-.project-details-form > div > div {
+.details-form > div > div {
   @apply flex flex-row items-center space-x-1;
 }
 
-.project-details-form > div > div > textarea {
+.details-form > div > div > textarea {
   @apply w-64;
 }
 
