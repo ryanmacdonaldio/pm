@@ -96,6 +96,26 @@ export const ticketRouter = t.router({
 
     return tickets;
   }),
+  update: protectedProcedure
+    .input(
+      TicketModel.omit({
+        createdAt: true,
+        creatorId: true,
+        projectId: true,
+        title: true,
+        updatedAt: true,
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { id, ...data } = input;
+
+      await ctx.prisma.ticket.update({
+        data,
+        where: {
+          id,
+        },
+      });
+    }),
   comment: t.router({
     add: protectedProcedure
       .input(
