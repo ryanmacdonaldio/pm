@@ -160,11 +160,13 @@ model TicketComment {
 }
 
 model TicketHistory {
-  id            String   @id @default(cuid())
-  changeType    String
-  previousValue String
-  newValue      String
-  changedAt     DateTime @default(now())
+  id             String   @id @default(cuid())
+  changeType     String
+  previousValue  String
+  previousColour String
+  newValue       String
+  newColour      String
+  changedAt      DateTime @default(now())
 
   ticketId String
   ticket   Ticket @relation(fields: [ticketId], references: [id])
