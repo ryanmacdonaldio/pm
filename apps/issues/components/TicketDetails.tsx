@@ -69,13 +69,12 @@ export default function TicketDetails({ ticket }: { ticket: TicketType }) {
           <span className="font-light italic text-sm text-slate-900">
             Created on{' '}
             {new Date(ticket.createdAt).toLocaleString('en-US', dateOptions)}
+            {ticket.createdAt !== ticket.updatedAt &&
+              ` and Updated on ${new Date(ticket.updatedAt).toLocaleString(
+                'en-US',
+                dateOptions
+              )}`}
           </span>
-          {ticket.createdAt !== ticket.updatedAt && (
-            <span className="font-light italic text-sm text-slate-900">
-              | Updated on{' '}
-              {new Date(ticket.updatedAt).toLocaleString('en-US', dateOptions)}
-            </span>
-          )}
         </div>
         {edit ? (
           <button
