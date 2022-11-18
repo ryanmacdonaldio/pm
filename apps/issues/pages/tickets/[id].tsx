@@ -9,6 +9,7 @@ import { z } from 'zod';
 
 import FormInput from '../../components/FormInput';
 import Head from '../../components/Head';
+import TicketDetails from '../../components/TicketDetails';
 import requireLayoutProps from '../../utils/requireLayoutProps';
 import { trpc } from '../../utils/trpc';
 
@@ -24,7 +25,7 @@ const FormSchema = TicketCommentModel.omit({
 });
 type FormSchemaType = z.infer<typeof FormSchema>;
 
-function TicketDetails() {
+function TicketPage() {
   const dateOptions: Intl.DateTimeFormatOptions = {
     day: '2-digit',
     month: 'long',
@@ -76,52 +77,7 @@ function TicketDetails() {
         </div>
       </div>
       <div className="col-span-1 flex flex-col space-y-4">
-        <div className="bg-slate-50 p-4 rounded-lg shadow-md">
-          <span className="font-medium text-xl text-slate-900">
-            Ticket Details
-          </span>
-          <div
-            className="grid mx-2 my-2 space-y-1"
-            style={{ gridTemplateColumns: '1fr 3fr' }}
-          >
-            <span className="mt-1">Description</span>
-            <span>{ticket.description}</span>
-            <span>Created</span>
-            <span>
-              {new Date(ticket.createdAt).toLocaleString('en-US', dateOptions)}
-            </span>
-            <span>Priority</span>
-            <div className="flex flex-row items-center space-x-2">
-              {ticket.ticketPriority && (
-                <div
-                  className="h-2 rounded-md w-2"
-                  style={{ backgroundColor: ticket.ticketPriority.colour }}
-                />
-              )}
-              <span>{ticket.ticketPriority?.value}</span>
-            </div>
-            <span>Status</span>
-            <div className="flex flex-row items-center space-x-2">
-              {ticket.ticketStatus && (
-                <div
-                  className="h-2 rounded-md w-2"
-                  style={{ backgroundColor: ticket.ticketStatus.colour }}
-                />
-              )}
-              <span>{ticket.ticketStatus?.value}</span>
-            </div>
-            <span>Type</span>
-            <div className="flex flex-row items-center space-x-2">
-              {ticket.ticketType && (
-                <div
-                  className="h-2 rounded-md w-2"
-                  style={{ backgroundColor: ticket.ticketType.colour }}
-                />
-              )}
-              <span>{ticket.ticketType?.value}</span>
-            </div>
-          </div>
-        </div>
+        <TicketDetails ticket={ticket} />
       </div>
       <div className="col-span-2">
         <div className="bg-slate-50 p-4 rounded-lg shadow-md">
@@ -186,4 +142,4 @@ export const getServerSideProps = requireLayoutProps(async (ctx) => {
   return { props: {} };
 });
 
-export default TicketDetails;
+export default TicketPage;
