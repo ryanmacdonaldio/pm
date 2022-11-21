@@ -1,5 +1,5 @@
 import * as z from "zod"
-import { CompleteProject, RelatedProjectModel, CompleteUser, RelatedUserModel, CompleteTicketPriority, RelatedTicketPriorityModel, CompleteTicketStatus, RelatedTicketStatusModel, CompleteTicketType, RelatedTicketTypeModel, CompleteTicketComment, RelatedTicketCommentModel } from "./index"
+import { CompleteProject, RelatedProjectModel, CompleteUser, RelatedUserModel, CompleteTicketPriority, RelatedTicketPriorityModel, CompleteTicketStatus, RelatedTicketStatusModel, CompleteTicketType, RelatedTicketTypeModel, CompleteTicketComment, RelatedTicketCommentModel, CompleteTicketHistory, RelatedTicketHistoryModel } from "./index"
 
 export const TicketModel = z.object({
   id: z.string(),
@@ -24,6 +24,7 @@ export interface CompleteTicket extends z.infer<typeof TicketModel> {
   ticketStatus?: CompleteTicketStatus | null
   ticketType?: CompleteTicketType | null
   comments: CompleteTicketComment[]
+  history: CompleteTicketHistory[]
 }
 
 /**
@@ -39,4 +40,5 @@ export const RelatedTicketModel: z.ZodSchema<CompleteTicket> = z.lazy(() => Tick
   ticketStatus: RelatedTicketStatusModel.nullish(),
   ticketType: RelatedTicketTypeModel.nullish(),
   comments: RelatedTicketCommentModel.array(),
+  history: RelatedTicketHistoryModel.array(),
 }))

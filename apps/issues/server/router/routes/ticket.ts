@@ -5,6 +5,7 @@ import {
   TicketStatusModel,
   TicketTypeModel,
 } from '@pm/prisma';
+import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 
 import {
@@ -28,6 +29,66 @@ export const ticketRouter = t.router({
         data: { ...input, creatorId: ctx.session.user.id },
       });
 
+      if (input.ticketPriorityId) {
+        const ticketPriority = await ctx.prisma.ticketPriority.findUnique({
+          where: { id: input.ticketPriorityId },
+        });
+
+        if (!ticketPriority) throw new TRPCError({ code: 'BAD_REQUEST' });
+
+        await ctx.prisma.ticketHistory.create({
+          data: {
+            changeType: 'Priority',
+            newColour: ticketPriority.colour,
+            newValue: ticketPriority.value,
+            previousColour: 'black',
+            previousValue: 'Nil',
+            ticketId: ticket.id,
+            userId: ctx.session.user.id,
+          },
+        });
+      }
+
+      if (input.ticketStatusId) {
+        const ticketStatus = await ctx.prisma.ticketStatus.findUnique({
+          where: { id: input.ticketStatusId },
+        });
+
+        if (!ticketStatus) throw new TRPCError({ code: 'BAD_REQUEST' });
+
+        await ctx.prisma.ticketHistory.create({
+          data: {
+            changeType: 'Status',
+            newColour: ticketStatus.colour,
+            newValue: ticketStatus.value,
+            previousColour: 'black',
+            previousValue: 'Nil',
+            ticketId: ticket.id,
+            userId: ctx.session.user.id,
+          },
+        });
+      }
+
+      if (input.ticketTypeId) {
+        const ticketType = await ctx.prisma.ticketType.findUnique({
+          where: { id: input.ticketTypeId },
+        });
+
+        if (!ticketType) throw new TRPCError({ code: 'BAD_REQUEST' });
+
+        await ctx.prisma.ticketHistory.create({
+          data: {
+            changeType: 'Type',
+            newColour: ticketType.colour,
+            newValue: ticketType.value,
+            previousColour: 'black',
+            previousValue: 'Nil',
+            ticketId: ticket.id,
+            userId: ctx.session.user.id,
+          },
+        });
+      }
+
       return ticket.id;
     }),
   get: protectedProcedure
@@ -38,6 +99,10 @@ export const ticketRouter = t.router({
           comments: {
             include: { creator: true },
             orderBy: [{ createdAt: 'desc' }],
+          },
+          history: {
+            include: { user: true },
+            orderBy: [{ changedAt: 'desc' }],
           },
           project: true,
           ticketPriority: true,
@@ -108,6 +173,129 @@ export const ticketRouter = t.router({
     )
     .mutation(async ({ ctx, input }) => {
       const { id, ...data } = input;
+
+      const ticket = await ctx.prisma.ticket.findUnique({
+        include: { ticketPriority: true, ticketStatus: true, ticketType: true },
+        where: { id },
+      });
+
+      if (!ticket) throw new TRPCError({ code: 'BAD_REQUEST' });
+
+      if (data.ticketPriorityId !== ticket?.ticketPriorityId) {
+        let newValue = '';
+        let newColour = 'black';
+        let previousValue = '';
+        let previousColour = 'black';
+
+        if (data.ticketPriorityId) {
+          const ticketPriority = await ctx.prisma.ticketPriority.findUnique({
+            where: { id: data.ticketPriorityId },
+          });
+
+          if (!ticketPriority) throw new TRPCError({ code: 'BAD_REQUEST' });
+
+          newValue = ticketPriority.value;
+          newColour = ticketPriority.colour;
+        } else {
+          newValue = 'Nil';
+        }
+
+        if (ticket.ticketPriority) {
+          previousValue = ticket.ticketPriority.value;
+          previousColour = ticket.ticketPriority.colour;
+        } else {
+          previousValue = 'Nil';
+        }
+
+        await ctx.prisma.ticketHistory.create({
+          data: {
+            changeType: 'Priority',
+            newValue,
+            newColour,
+            previousValue,
+            previousColour,
+            ticketId: id,
+            userId: ctx.session.user.id,
+          },
+        });
+      }
+
+      if (data.ticketStatusId !== ticket?.ticketStatusId) {
+        let newValue = '';
+        let newColour = 'black';
+        let previousValue = '';
+        let previousColour = 'black';
+
+        if (data.ticketStatusId) {
+          const ticketStatus = await ctx.prisma.ticketStatus.findUnique({
+            where: { id: data.ticketStatusId },
+          });
+
+          if (!ticketStatus) throw new TRPCError({ code: 'BAD_REQUEST' });
+
+          newValue = ticketStatus.value;
+          newColour = ticketStatus.colour;
+        } else {
+          newValue = 'Nil';
+        }
+
+        if (ticket.ticketStatus) {
+          previousValue = ticket.ticketStatus.value;
+          previousColour = ticket.ticketStatus.colour;
+        } else {
+          previousValue = 'Nil';
+        }
+
+        await ctx.prisma.ticketHistory.create({
+          data: {
+            changeType: 'Status',
+            newValue,
+            newColour,
+            previousValue,
+            previousColour,
+            ticketId: id,
+            userId: ctx.session.user.id,
+          },
+        });
+      }
+      if (data.ticketTypeId !== ticket?.ticketTypeId) {
+        let newValue = '';
+        let newColour = 'black';
+        let previousValue = '';
+        let previousColour = 'black';
+
+        if (data.ticketTypeId) {
+          const ticketType = await ctx.prisma.ticketType.findUnique({
+            where: { id: data.ticketTypeId },
+          });
+
+          if (!ticketType) throw new TRPCError({ code: 'BAD_REQUEST' });
+
+          newValue = ticketType.value;
+          newColour = ticketType.colour;
+        } else {
+          newValue = 'Nil';
+        }
+
+        if (ticket.ticketType) {
+          previousValue = ticket.ticketType.value;
+          previousColour = ticket.ticketType.colour;
+        } else {
+          previousValue = 'Nil';
+        }
+
+        await ctx.prisma.ticketHistory.create({
+          data: {
+            changeType: 'Type',
+            newValue,
+            newColour,
+            previousValue,
+            previousColour,
+            ticketId: id,
+            userId: ctx.session.user.id,
+          },
+        });
+      }
 
       await ctx.prisma.ticket.update({
         data,

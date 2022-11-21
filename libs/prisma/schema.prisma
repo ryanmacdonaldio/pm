@@ -55,6 +55,7 @@ model User {
   ticketsCreated      Ticket[]              @relation("created")
   ticketsAssigned     Ticket[]              @relation("assigned")
   comments            TicketComment[]
+  changes             TicketHistory[]
   usersInOrganization UsersInOrganization[]
   usersInProject      UsersInProject[]
 }
@@ -142,6 +143,7 @@ model Ticket {
   ticketType       TicketType?     @relation(fields: [ticketTypeId], references: [id])
 
   comments TicketComment[]
+  history  TicketHistory[]
 
   @@unique([projectId, title])
 }
@@ -155,6 +157,21 @@ model TicketComment {
   creator   User     @relation(fields: [creatorId], references: [id])
   ticketId  String
   ticket    Ticket   @relation(fields: [ticketId], references: [id])
+}
+
+model TicketHistory {
+  id             String   @id @default(cuid())
+  changeType     String
+  previousValue  String
+  previousColour String
+  newValue       String
+  newColour      String
+  changedAt      DateTime @default(now())
+
+  ticketId String
+  ticket   Ticket @relation(fields: [ticketId], references: [id])
+  userId   String
+  user     User   @relation(fields: [userId], references: [id])
 }
 
 model TicketPriority {

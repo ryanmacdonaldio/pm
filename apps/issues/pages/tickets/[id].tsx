@@ -80,8 +80,78 @@ function TicketPage() {
         <TicketDetails ticket={ticket} />
       </div>
       <div className="col-span-2">
-        <div className="bg-slate-50 p-4 rounded-lg shadow-md">
+        <div className="bg-slate-50 col-span-1 flex flex-col p-4 rounded-lg shadow-md space-y-2">
           <span className="font-medium text-xl text-slate-900">History</span>
+          {ticket.history.length > 0 ? (
+            <div className="flex flex-col space-y-2">
+              {ticket.history.map((history) => {
+                const changedAt = new Date(history.changedAt);
+
+                const previousDiv =
+                  history.previousValue !== 'Nil' ? (
+                    <div className="bg-slate-200 flex flex-row items-center mx-2 px-1 rounded-md space-x-2">
+                      <div
+                        className="h-2 rounded-md w-2"
+                        style={{
+                          backgroundColor: history.previousColour,
+                        }}
+                      />
+                      <span>{history.previousValue}</span>
+                    </div>
+                  ) : (
+                    <></>
+                  );
+
+                const newDiv =
+                  history.newValue !== 'Nil' ? (
+                    <div className="bg-slate-200 flex flex-row items-center mx-2 px-1 rounded-md space-x-2">
+                      <div
+                        className="h-2 rounded-md w-2"
+                        style={{
+                          backgroundColor: history.newColour,
+                        }}
+                      />
+                      <span>{history.newValue}</span>
+                    </div>
+                  ) : (
+                    <></>
+                  );
+
+                return (
+                  <div key={history.id} className="flex flex-col">
+                    <div className="flex items-center justify-between space-x-2">
+                      <span>{history.user.name}</span>
+                      <span className="font-light italic text-sm text-slate-900">
+                        {changedAt.toLocaleString('en-US', dateOptions)}
+                      </span>
+                    </div>
+                    <div className="flex">
+                      {`${history.changeType} ${
+                        history.previousValue === 'Nil'
+                          ? 'set to'
+                          : history.newValue === 'Nil'
+                          ? 'removed (was'
+                          : 'changed from'
+                      }`}
+                      {history.previousValue === 'Nil' ? newDiv : previousDiv}
+                      {history.previousValue !== 'Nil'
+                        ? history.newValue === 'Nil'
+                          ? ')'
+                          : 'to'
+                        : ''}
+                      {history.previousValue !== 'Nil' &&
+                        history.newValue !== 'Nil' &&
+                        newDiv}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <span className="font-light italic text-slate-900">
+              No History Found
+            </span>
+          )}
         </div>
       </div>
       <div>
