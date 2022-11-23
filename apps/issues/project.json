@@ -1,4 +1,5 @@
 {
+  "name": "issues",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/issues",
   "projectType": "application",
@@ -13,7 +14,7 @@
       },
       "configurations": {
         "development": {
-          "outputPath": "tmp/apps/issues"
+          "outputPath": "apps/issues"
         },
         "production": {}
       }
@@ -44,7 +45,7 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/apps/issues"],
+      "outputs": ["{workspaceRoot}/coverage/apps/issues"],
       "options": {
         "jestConfig": "apps/issues/jest.config.ts",
         "passWithNoTests": true
