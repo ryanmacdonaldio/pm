@@ -13,8 +13,8 @@ import {
 
 import Head from '../components/Head';
 import { ProjectList } from '../components/ProjectList';
+import { trpc } from '../lib/trpc';
 import requireLayoutProps from '../utils/requireLayoutProps';
-import { trpc } from '../utils/trpc';
 
 function Index() {
   const { data: projects } = trpc.project.getAll.useQuery();

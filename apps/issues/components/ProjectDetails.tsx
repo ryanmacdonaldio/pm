@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-import { trpc } from '../utils/trpc';
+import { trpc } from '../lib/trpc';
 
 const FormSchema = ProjectModel.omit({
   id: true,

@@ -4,7 +4,7 @@ import { Session } from 'next-auth';
 import { SessionProvider } from 'next-auth/react';
 
 import Layout from '../components/Layout';
-import { trpc } from '../utils/trpc';
+import { trpc } from '../lib/trpc';
 
 import './styles.css';
 

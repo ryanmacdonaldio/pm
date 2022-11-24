@@ -10,7 +10,7 @@ import type { SubmitHandler } from 'react-hook-form';
 import { z } from 'zod';
 
 import FormInput from './FormInput';
-import { trpc } from '../utils/trpc';
+import { trpc } from '../lib/trpc';
 
 const Models = {
   priority: TicketPriorityModel,

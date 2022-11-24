@@ -8,8 +8,8 @@ import { z } from 'zod';
 
 import FormInput from '../../components/FormInput';
 import Head from '../../components/Head';
+import { trpc } from '../../lib/trpc';
 import requireLayoutProps from '../../utils/requireLayoutProps';
-import { trpc } from '../../utils/trpc';
 
 interface QParams extends ParsedUrlQuery {
   project_id: string | undefined;

@@ -7,12 +7,12 @@ import {
   PlusIcon,
 } from '@heroicons/react/outline';
 import Link from 'next/link';
+import Router from 'next/router';
 import { Session } from 'next-auth';
 import { signIn, signOut } from 'next-auth/react';
 import { ChangeEvent, useState } from 'react';
 
-import { trpc } from '../utils/trpc';
-import Router from 'next/router';
+import { trpc } from '../lib/trpc';
 
 type BaseLink = {
   icon?: (props: React.ComponentProps<'svg'>) => JSX.Element;

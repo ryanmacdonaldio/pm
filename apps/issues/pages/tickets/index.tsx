@@ -3,8 +3,8 @@ import Link from 'next/link';
 
 import Head from '../../components/Head';
 import { TicketList } from '../../components/TicketList';
+import { trpc } from '../../lib/trpc';
 import requireLayoutProps from '../../utils/requireLayoutProps';
-import { trpc } from '../../utils/trpc';
 
 function Index() {
   const { data: assignedTickets, isLoading: assignedIsLoading } =

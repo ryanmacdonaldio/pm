@@ -2,8 +2,8 @@ import { PencilIcon, TrashIcon } from '@heroicons/react/outline';
 
 import Head from '../../components/Head';
 import { TicketSettingsForm } from '../../components/TicketSettingsForm';
+import { trpc } from '../../lib/trpc';
 import requireLayoutProps from '../../utils/requireLayoutProps';
-import { trpc } from '../../utils/trpc';
 
 function Settings() {
   const { data: ticketPriorities } = trpc.ticket.priority.getAll.useQuery();

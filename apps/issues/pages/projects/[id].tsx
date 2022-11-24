@@ -22,8 +22,8 @@ import { z } from 'zod';
 import Head from '../../components/Head';
 import Modal from '../../components/Modal';
 import ProjectDetails from '../../components/ProjectDetails';
+import { trpc } from '../../lib/trpc';
 import requireLayoutProps from '../../utils/requireLayoutProps';
-import { trpc } from '../../utils/trpc';
 
 interface QParams extends ParsedUrlQuery {
   id: string;

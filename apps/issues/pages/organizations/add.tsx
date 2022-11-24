@@ -6,8 +6,8 @@ import { z } from 'zod';
 
 import FormInput from '../../components/FormInput';
 import Head from '../../components/Head';
+import { trpc } from '../../lib/trpc';
 import requireLayoutProps from '../../utils/requireLayoutProps';
-import { trpc } from '../../utils/trpc';
 
 const FormSchema = OrganizationModel.omit({ id: true });
 type FormSchemaType = z.infer<typeof FormSchema>;
