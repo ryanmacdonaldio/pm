@@ -1,7 +1,7 @@
 import type { GetServerSideProps, GetServerSidePropsContext } from 'next';
 
+import { prisma } from '../lib/db';
 import { getAuthSession } from '../server/common/get-server-session';
-import { prisma } from '../server/db/client';
 
 const requireLayoutProps =
   (gssp: GetServerSideProps) => async (ctx: GetServerSidePropsContext) => {
