@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Head from '../../components/Head';
 import { TicketList } from '../../components/TicketList';
 import { trpc } from '../../lib/trpc';
-import requireLayoutProps from '../../utils/requireLayoutProps';
+import { requireLayoutProps } from '../../lib/utils';
 
 function All() {
   const { data: tickets, isLoading } = trpc.ticket.getAll.useQuery();

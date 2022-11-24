@@ -11,7 +11,7 @@ import FormInput from '../../components/FormInput';
 import Head from '../../components/Head';
 import TicketDetails from '../../components/TicketDetails';
 import { trpc } from '../../lib/trpc';
-import requireLayoutProps from '../../utils/requireLayoutProps';
+import { requireLayoutProps } from '../../lib/utils';
 
 interface QParams extends ParsedUrlQuery {
   id: string;

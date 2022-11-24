@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Head from '../../components/Head';
 import { ProjectList } from '../../components/ProjectList';
 import { trpc } from '../../lib/trpc';
-import requireLayoutProps from '../../utils/requireLayoutProps';
+import { requireLayoutProps } from '../../lib/utils';
 
 function All() {
   const { data: projects, isLoading } = trpc.project.getAll.useQuery();

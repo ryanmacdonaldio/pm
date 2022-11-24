@@ -14,7 +14,7 @@ import {
 import Head from '../components/Head';
 import { ProjectList } from '../components/ProjectList';
 import { trpc } from '../lib/trpc';
-import requireLayoutProps from '../utils/requireLayoutProps';
+import { requireLayoutProps } from '../lib/utils';
 
 function Index() {
   const { data: projects } = trpc.project.getAll.useQuery();
