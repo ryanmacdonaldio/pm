@@ -1,7 +1,7 @@
 import { Organization } from '@prisma/client';
 import { Session } from 'next-auth';
 
-import { Sidebar } from './Sidebar';
+import { Sidebar } from './Sidebar_OLD';
 
 export default function Layout({
   children,

@@ -1,3 +1,5 @@
+'use client';
+
 import { Organization } from '@prisma/client';
 import {
   ArrowRightIcon,

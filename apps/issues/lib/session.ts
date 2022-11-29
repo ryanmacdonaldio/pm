@@ -1,7 +1,7 @@
-import { unstable_getServerSession } from 'next-auth';
+import { Session, unstable_getServerSession } from 'next-auth';
 
 import { authOptions } from './auth';
 
-export async function getRSCSession() {
-  return unstable_getServerSession(authOptions);
+export async function getSession() {
+  return unstable_getServerSession(authOptions) as Promise<Session>;
 }
