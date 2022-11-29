@@ -4,6 +4,20 @@ import { PlusIcon } from '@heroicons/react/outline';
 import type { Organization } from '@prisma/client';
 import type { Session } from 'next-auth';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+
+async function update(
+  userId: string,
+  organizationId: string,
+  refresh: () => void
+) {
+  await fetch(`/api/users/${userId}/settings/organization`, {
+    body: JSON.stringify({ organizationId }),
+    method: 'PUT',
+  });
+
+  refresh();
+}
 
 export function SidebarOrganizations({
   organizations,
@@ -12,13 +26,17 @@ export function SidebarOrganizations({
   organizations: Organization[];
   session: Session;
 }) {
+  const router = useRouter();
+
   return (
     <div className="flex flex-col mb-4 mx-4 space-y-1">
       <span className="text-slate-50">Organization:</span>
       <select
         defaultValue={session.user.settings.organization ?? ''}
         className="text-slate-800 py-1"
-        onChange={(e) => console.log(e.target.value)}
+        onChange={(e) =>
+          update(session.user.id, e.target.value, router.refresh)
+        }
       >
         {organizations.map((organization) => (
           <option key={organization.id} value={organization.id}>
