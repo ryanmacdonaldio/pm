@@ -1,3 +1,5 @@
+'use client';
+
 import { InformationCircleIcon } from '@heroicons/react/outline';
 import { Prisma } from '@prisma/client';
 import {
