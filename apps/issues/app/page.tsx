@@ -1,5 +1,4 @@
 import { PlusIcon } from '@heroicons/react/outline';
-import type { Project } from '@prisma/client';
 import type { Session } from 'next-auth';
 import Link from 'next/link';
 
@@ -83,31 +82,31 @@ export default async function Page() {
       <div className="items-center bg-slate-50 flex font-medium justify-between p-4 rounded-lg shadow-md">
         <span className="text-xl">Active Projects</span>
         <div className="bg-blue-200 border-2 border-blue-800 rounded-full px-3 py-1 text-blue-800">
-          {projects?.filter((project) => !project.archived).length ?? 0}
+          {projects.filter((project) => !project.archived).length ?? 0}
         </div>
       </div>
       <div className="items-center bg-slate-50 flex font-medium justify-between p-4 rounded-lg shadow-md">
         <span className="text-xl">Important Tickets</span>
         <div className="bg-red-200 border-2 border-red-800 rounded-full px-3 py-1 text-red-800">
-          {tickets && ticketPriorities && ticketPriorities.length > 0
-            ? tickets.filter(
-                (ticket) =>
-                  ticket.ticketPriorityId &&
-                  importantFilterIds.includes(ticket.ticketPriorityId)
-              ).length
-            : 0}
+          {
+            tickets.filter(
+              (ticket) =>
+                ticket.ticketPriorityId &&
+                importantFilterIds.includes(ticket.ticketPriorityId)
+            ).length
+          }
         </div>
       </div>
       <div className="items-center bg-slate-50 flex font-medium justify-between p-4 rounded-lg shadow-md">
         <span className="text-xl">Unresolved Tickets</span>
         <div className="bg-orange-200 border-2 border-orange-800 rounded-full px-3 py-1 text-orange-800">
-          {tickets ? tickets.filter((ticket) => !ticket.archived).length : 0}
+          {tickets.filter((ticket) => !ticket.archived).length}
         </div>
       </div>
       <div className="items-center bg-slate-50 flex font-medium justify-between p-4 rounded-lg shadow-md">
         <span className="text-xl">Unassigned Tickets</span>
         <div className="bg-purple-200 border-2 border-purple-800 rounded-full px-3 py-1 text-purple-800">
-          {tickets ? tickets.filter((ticket) => !ticket.assignedId).length : 0}
+          {tickets.filter((ticket) => !ticket.assignedId).length}
         </div>
       </div>
       <div className="bg-slate-50 col-span-4 flex flex-col p-4 rounded-lg shadow-md space-y-2">
@@ -116,7 +115,7 @@ export default async function Page() {
       </div>
       <div className="bg-slate-50 col-span-4 p-4 rounded-lg shadow-md">
         <span className="font-medium text-xl text-slate-900">Projects</span>
-        <ProjectList isLoading={!projects} projects={projects} />
+        <ProjectList projects={projects} />
       </div>
     </div>
   );
