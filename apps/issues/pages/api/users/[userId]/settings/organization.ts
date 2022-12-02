@@ -13,7 +13,7 @@ export const schema = z.object({
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
-    const query = await schema.parse(JSON.parse(req.body));
+    const body = await schema.parse(JSON.parse(req.body));
 
     const session = (await unstable_getServerSession(
       req,
@@ -23,7 +23,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     const organization = await prisma.organization.findUnique({
       where: {
-        id: query.organizationId,
+        id: body.organizationId,
       },
     });
 

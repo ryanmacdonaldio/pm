@@ -11,7 +11,7 @@ export const schema = ProjectModel.omit({ id: true, organizationId: true });
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
-    const query = await schema.parse(JSON.parse(req.body));
+    const body = await schema.parse(JSON.parse(req.body));
 
     const session = (await unstable_getServerSession(
       req,
@@ -21,7 +21,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     const project = await prisma.project.create({
       data: {
-        ...query,
+        ...body,
         organizationId: session.user.settings.organization,
       },
     });
