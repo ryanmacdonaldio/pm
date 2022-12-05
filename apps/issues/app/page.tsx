@@ -2,7 +2,7 @@ import { PlusIcon } from '@heroicons/react/outline';
 import type { Session } from 'next-auth';
 import Link from 'next/link';
 
-import { ProjectList } from '../components/ProjectList';
+import ProjectList from '../components/ProjectList';
 import { prisma } from '../lib/db';
 import { getSession } from '../lib/session';
 

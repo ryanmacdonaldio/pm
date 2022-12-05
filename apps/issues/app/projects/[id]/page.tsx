@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation';
 
 import ProjectDetails from '../../../components/Project/Details';
 import ProjectTeamMembers from '../../../components/Project/TeamMembers';
-import ProjectTickets from '../../../components/Project/Tickets';
+import TicketList from '../../../components/TicketList';
 import { prisma } from '../../../lib/db';
 import { getSession } from '../../../lib/session';
 
@@ -37,6 +37,12 @@ async function getProject(id: string) {
 
 async function getTickets(id: string) {
   const tickets = await prisma.ticket.findMany({
+    include: {
+      project: true,
+      ticketPriority: true,
+      ticketStatus: true,
+      ticketType: true,
+    },
     where: {
       projectId: id,
     },
@@ -102,7 +108,8 @@ export default async function Page({ params: { id } }: PageProps) {
         />
       </div>
       <div className="bg-slate-50 col-span-3 p-4 rounded-lg shadow-md">
-        <ProjectTickets id={id} />
+        <span className="font-medium text-xl text-slate-900">Tickets</span>
+        <TicketList tickets={tickets} />
       </div>
     </div>
   );

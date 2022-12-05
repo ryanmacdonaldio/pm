@@ -13,7 +13,7 @@ const ProfileImage = ({ src, user }: { src?: string; user: string }) => {
   );
 };
 
-export function ProjectList({ projects }: { projects: ProjectType[] }) {
+export default function ProjectList({ projects }: { projects: ProjectType[] }) {
   const dateOptions: Intl.DateTimeFormatOptions = {
     day: 'numeric',
     month: 'long',

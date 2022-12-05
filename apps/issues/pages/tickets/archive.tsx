@@ -2,7 +2,7 @@ import { PlusIcon } from '@heroicons/react/outline';
 import Link from 'next/link';
 
 import Head from '../../components/Head';
-import { TicketList } from '../../components/TicketList';
+import { TicketList } from '../../components/TicketList_OLD';
 import { trpc } from '../../lib/trpc';
 import { requireLayoutProps } from '../../lib/utils';
 
