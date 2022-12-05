@@ -21,7 +21,7 @@ import { z } from 'zod';
 
 import Head from '../../components/Head';
 import Modal from '../../components/Modal';
-import ProjectDetails from '../../components/ProjectDetails';
+import ProjectDetails from '../../components/ProjectDetails_OLD';
 import { trpc } from '../../lib/trpc';
 import { requireLayoutProps } from '../../lib/utils';
 
