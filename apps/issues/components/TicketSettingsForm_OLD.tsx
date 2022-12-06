@@ -1,17 +1,16 @@
-'use client';
-
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   TicketPriorityModel,
   TicketStatusModel,
   TicketTypeModel,
 } from '@pm/prisma';
-import { TicketPriority, TicketStatus, TicketType } from '@prisma/client';
-import { useRouter } from 'next/navigation';
-import { SubmitHandler, useForm } from 'react-hook-form';
+import type { TicketPriority, TicketStatus, TicketType } from '@prisma/client';
+import { useForm } from 'react-hook-form';
+import type { SubmitHandler } from 'react-hook-form';
 import { z } from 'zod';
 
 import FormInput from './FormInput';
+import { trpc } from '../lib/trpc';
 
 const Models = {
   priority: TicketPriorityModel,
@@ -19,33 +18,39 @@ const Models = {
   type: TicketTypeModel,
 };
 
-async function add(
-  type: 'priority' | 'status' | 'type',
-  data: { colour: string; rank: number; value: string }
-) {
-  const urlMap = {
-    priority: 'Priorities',
-    status: 'Statuses',
-    type: 'Types',
-  };
-
-  await fetch(`/api/tickets/ticket${urlMap[type]}`, {
-    body: JSON.stringify(data),
-    method: 'POST',
-  });
-}
-
-export default function TicketSettingsForm({
+export function TicketSettingsForm({
   data,
   type,
 }: {
-  data: TicketPriority[] | TicketStatus[] | TicketType[];
+  data: TicketPriority[] | TicketStatus[] | TicketType[] | undefined;
   type: 'priority' | 'status' | 'type';
 }) {
   const FormSchema = Models[type].omit({ id: true, organizationId: true });
   type FormSchemaType = z.infer<typeof FormSchema>;
 
-  const router = useRouter();
+  const {
+    isLoading: isLoadingTicketPriority,
+    mutateAsync: mutateAsyncTicketPriority,
+  } = trpc.ticket.priority.add.useMutation();
+  const {
+    isLoading: isLoadingTicketStatus,
+    mutateAsync: mutateAsyncTicketStatus,
+  } = trpc.ticket.status.add.useMutation();
+  const { isLoading: isLoadingTicketType, mutateAsync: mutateAsyncTicketType } =
+    trpc.ticket.type.add.useMutation();
+  const utils = trpc.useContext();
+
+  const mutateAsyncs = {
+    priority: mutateAsyncTicketPriority,
+    status: mutateAsyncTicketStatus,
+    type: mutateAsyncTicketType,
+  };
+
+  const isLoadings = {
+    priority: isLoadingTicketPriority,
+    status: isLoadingTicketStatus,
+    type: isLoadingTicketType,
+  };
 
   const {
     formState: { errors },
@@ -57,11 +62,11 @@ export default function TicketSettingsForm({
   });
 
   const onSubmit: SubmitHandler<FormSchemaType> = async (data) => {
-    await add(type, data);
+    await mutateAsyncs[type](data);
+
+    await utils.ticket[type].getAll.invalidate();
 
     reset();
-
-    router.refresh();
   };
 
   return (
@@ -93,6 +98,7 @@ export default function TicketSettingsForm({
         <button
           type="submit"
           className="bg-slate-400 font-medium px-4 py-2 rounded-md shadow-sm text-md text-slate-800 hover:bg-slate-500 hover:text-slate-900"
+          disabled={isLoadings[type]}
         >
           Create
         </button>

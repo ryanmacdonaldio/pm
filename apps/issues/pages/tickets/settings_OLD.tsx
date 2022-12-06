@@ -1,7 +1,7 @@
 import { PencilIcon, TrashIcon } from '@heroicons/react/outline';
 
 import Head from '../../components/Head';
-import { TicketSettingsForm } from '../../components/TicketSettingsForm';
+import { TicketSettingsForm } from '../../components/TicketSettingsForm_OLD';
 import { trpc } from '../../lib/trpc';
 import { requireLayoutProps } from '../../lib/utils';
 
