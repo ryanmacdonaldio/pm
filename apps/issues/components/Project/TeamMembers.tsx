@@ -3,7 +3,6 @@
 import { PlusIcon, TrashIcon } from '@heroicons/react/outline';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { User } from '@prisma/client';
-import Id from 'apps/issues/pages/api/projects/[id]';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';

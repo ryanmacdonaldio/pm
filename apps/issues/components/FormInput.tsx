@@ -7,7 +7,7 @@ type ListValue = {
 
 type FormInputProps = {
   className?: string;
-  defaultListValue?: string;
+  defaultListValue?: string | null;
   error: FieldError | undefined;
   label: string;
   listValues?: ListValue[];

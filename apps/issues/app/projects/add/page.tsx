@@ -12,12 +12,12 @@ const FormSchema = ProjectModel.omit({ id: true, organizationId: true });
 type FormSchemaType = z.infer<typeof FormSchema>;
 
 async function add(data: FormSchemaType) {
-  const projectID = await fetch('/api/projects', {
+  const res = await fetch('/api/projects', {
     body: JSON.stringify(data),
     method: 'POST',
   });
 
-  return projectID;
+  return await res.text();
 }
 
 export default function Page() {
