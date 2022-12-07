@@ -1,15 +1,17 @@
-import { TicketTypeModel } from '@pm/prisma';
+import { TicketCommentModel } from '@pm/prisma';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { Session, unstable_getServerSession } from 'next-auth';
 import { z } from 'zod';
 
 import { authOptions } from '../../../../lib/auth';
 import { prisma } from '../../../../lib/db';
-import { withMethods, withOrganization } from '../../../../lib/middleware';
+import { withAuthentication, withMethods } from '../../../../lib/middleware';
 
-export const schema = TicketTypeModel.omit({
+export const schema = TicketCommentModel.omit({
+  createdAt: true,
+  creatorId: true,
   id: true,
-  organizationId: true,
+  ticketId: true,
 });
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -20,16 +22,17 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       req,
       res,
       authOptions
-    )) as Session & { user: { settings: { organization: string } } };
+    )) as Session;
 
-    const ticketType = await prisma.ticketType.create({
+    const ticketComment = await prisma.ticketComment.create({
       data: {
         ...body,
-        organizationId: session.user.settings.organization,
+        creatorId: session.user.id,
+        ticketId: req.query.id as string,
       },
     });
 
-    return res.status(200).send(ticketType.id);
+    return res.status(200).send(ticketComment.id);
   } catch (error) {
     if (error instanceof z.ZodError) {
       return res.status(422).json(error.issues);
@@ -39,4 +42,4 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   }
 }
 
-export default withMethods(['POST'], withOrganization(handler));
+export default withMethods(['POST'], withAuthentication(handler));

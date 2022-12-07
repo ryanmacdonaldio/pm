@@ -89,8 +89,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       });
     }
 
-    console.log(ticket);
-
     return res.send(ticket.id);
   } catch (error) {
     if (error instanceof z.ZodError) {

@@ -2,8 +2,8 @@ import { ProjectModel } from '@pm/prisma';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { z } from 'zod';
 
-import { prisma } from '../../../lib/db';
-import { withAuthentication, withMethods } from '../../../lib/middleware';
+import { prisma } from '../../../../lib/db';
+import { withAuthentication, withMethods } from '../../../../lib/middleware';
 
 export const schema = ProjectModel.omit({
   id: true,

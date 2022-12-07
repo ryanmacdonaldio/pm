@@ -1,70 +1,90 @@
-import { zodResolver } from '@hookform/resolvers/zod';
-import { TicketCommentModel } from '@pm/prisma';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
-import type { ParsedUrlQuery } from 'querystring';
-import { useEffect } from 'react';
-import { SubmitHandler, useForm } from 'react-hook-form';
-import { z } from 'zod';
+import { redirect } from 'next/navigation';
+import { Session } from 'next-auth';
 
-import FormInput from '../../components/FormInput';
-import Head from '../../components/Head';
-import TicketDetails from '../../components/TicketDetails';
-import { trpc } from '../../lib/trpc';
-import { requireLayoutProps } from '../../lib/utils';
+import TicketDetails from '../../../components/TicketDetails';
+import CommentForm from '../../../components/Ticket/CommentForm';
+import { prisma } from '../../../lib/db';
+import { getSession } from '../../../lib/session';
 
-interface QParams extends ParsedUrlQuery {
-  id: string;
+interface PageProps {
+  params: {
+    id: string;
+  };
 }
 
-const FormSchema = TicketCommentModel.omit({
-  createdAt: true,
-  creatorId: true,
-  id: true,
-  ticketId: true,
-});
-type FormSchemaType = z.infer<typeof FormSchema>;
+async function getTicket(id: string) {
+  const ticket = await prisma.ticket.findUnique({
+    include: {
+      comments: {
+        include: { creator: true },
+        orderBy: [{ createdAt: 'desc' }],
+      },
+      history: {
+        include: { user: true },
+        orderBy: [{ changedAt: 'desc' }],
+      },
+      project: true,
+      ticketPriority: true,
+      ticketStatus: true,
+      ticketType: true,
+    },
+    where: { id },
+  });
 
-function TicketPage() {
+  return ticket;
+}
+
+async function getTicketPriorities(session: Session) {
+  const ticketPriorities = await prisma.ticketPriority.findMany({
+    where: {
+      organizationId: session.user.settings.organization,
+    },
+  });
+
+  return ticketPriorities;
+}
+
+async function getTicketStatuses(session: Session) {
+  const ticketStatuses = await prisma.ticketStatus.findMany({
+    where: {
+      organizationId: session.user.settings.organization,
+    },
+  });
+
+  return ticketStatuses;
+}
+
+async function getTicketTypes(session: Session) {
+  const ticketTypes = await prisma.ticketType.findMany({
+    where: {
+      organizationId: session.user.settings.organization,
+    },
+  });
+
+  return ticketTypes;
+}
+
+export default async function Page({ params: { id } }: PageProps) {
   const dateOptions: Intl.DateTimeFormatOptions = {
     day: '2-digit',
     month: 'long',
     year: 'numeric',
   };
 
-  const router = useRouter();
-  const { id } = router.query as QParams;
+  const ticket = await getTicket(id);
 
-  const { data: ticket, isLoading } = trpc.ticket.get.useQuery({ id });
-  const { mutateAsync } = trpc.ticket.comment.add.useMutation();
-  const utils = trpc.useContext();
+  if (!ticket) {
+    redirect('/');
+  }
 
-  useEffect(() => {
-    if (router && !isLoading && !ticket) {
-      router.push('/');
-    }
-  }, [isLoading, router, ticket]);
+  const session = await getSession();
+  const ticketPriorities = await getTicketPriorities(session);
+  const ticketStatuses = await getTicketStatuses(session);
+  const ticketTypes = await getTicketTypes(session);
 
-  const {
-    formState: { errors },
-    handleSubmit,
-    register,
-    reset,
-  } = useForm<FormSchemaType>({ resolver: zodResolver(FormSchema) });
-
-  const onSubmit: SubmitHandler<FormSchemaType> = async (data) => {
-    await mutateAsync({ ...data, ticketId: id });
-
-    reset();
-
-    await utils.ticket.get.invalidate({ id });
-  };
-
-  return isLoading || !ticket ? (
-    <div>Loading...</div>
-  ) : (
+  return (
     <div className="auto-rows-min gap-4 grid grid-cols-4">
-      <Head title={`${ticket.project.name} > ${ticket.title}`} />
       <div className="col-span-4 flex items-center justify-between px-2">
         <div className="flex space-x-2 text-2xl text-slate-900">
           <Link href={`/projects/${ticket.projectId}`}>
@@ -77,7 +97,12 @@ function TicketPage() {
         </div>
       </div>
       <div className="col-span-1 flex flex-col space-y-4">
-        <TicketDetails ticket={ticket} />
+        <TicketDetails
+          ticket={ticket}
+          ticketPriorities={ticketPriorities}
+          ticketStatuses={ticketStatuses}
+          ticketTypes={ticketTypes}
+        />
       </div>
       <div className="col-span-2">
         <div className="bg-slate-50 col-span-1 flex flex-col p-4 rounded-lg shadow-md space-y-2">
@@ -159,24 +184,7 @@ function TicketPage() {
           <span className="font-medium text-xl text-slate-900">
             Add Comment
           </span>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="flex flex-col space-y-2">
-              <FormInput
-                className="w-full"
-                error={errors.comment}
-                label=""
-                register={register('comment')}
-                type="textarea"
-              />
-              <button
-                type="submit"
-                className="bg-slate-400 font-medium px-4 py-2 rounded-md shadow-sm text-md text-slate-800 hover:bg-slate-500 hover:text-slate-900"
-                disabled={isLoading}
-              >
-                Add
-              </button>
-            </div>
-          </form>
+          <CommentForm id={id} />
         </div>
         <div className="bg-slate-50 col-span-1 flex flex-col p-4 rounded-lg shadow-md space-y-2">
           <span className="font-medium text-xl text-slate-900">Comments</span>
@@ -207,9 +215,3 @@ function TicketPage() {
     </div>
   );
 }
-
-export const getServerSideProps = requireLayoutProps(async (ctx) => {
-  return { props: {} };
-});
-
-export default TicketPage;
