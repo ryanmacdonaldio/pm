@@ -1,12 +1,18 @@
+'use client';
+
 import { PencilIcon, XIcon } from '@heroicons/react/outline';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { TicketModel } from '@pm/prisma';
-import { Prisma } from '@prisma/client';
+import {
+  Prisma,
+  TicketPriority,
+  TicketStatus,
+  TicketType,
+} from '@prisma/client';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
-
-import { trpc } from '../utils/trpc';
 
 const FormSchema = TicketModel.omit({
   createdAt: true,
@@ -18,7 +24,7 @@ const FormSchema = TicketModel.omit({
 });
 type FormSchemaType = z.infer<typeof FormSchema>;
 
-type TicketType = Prisma.TicketGetPayload<{
+type ExtendedTicketType = Prisma.TicketGetPayload<{
   include: {
     project: true;
     ticketPriority: true;
@@ -27,19 +33,32 @@ type TicketType = Prisma.TicketGetPayload<{
   };
 }>;
 
-export default function TicketDetails({ ticket }: { ticket: TicketType }) {
+async function update(id: string, data: FormSchemaType) {
+  await fetch(`/api/tickets/${id}`, {
+    body: JSON.stringify(data),
+    method: 'PATCH',
+  });
+}
+
+export default function TicketDetails({
+  ticket,
+  ticketPriorities,
+  ticketStatuses,
+  ticketTypes,
+}: {
+  ticket: ExtendedTicketType;
+  ticketPriorities: TicketPriority[];
+  ticketStatuses: TicketStatus[];
+  ticketTypes: TicketType[];
+}) {
   const dateOptions: Intl.DateTimeFormatOptions = {
     day: '2-digit',
     month: 'long',
     year: 'numeric',
   };
 
+  const router = useRouter();
   const [edit, setEdit] = useState(false);
-  const { data: ticketPriorities } = trpc.ticket.priority.getAll.useQuery();
-  const { data: ticketStatuses } = trpc.ticket.status.getAll.useQuery();
-  const { data: ticketTypes } = trpc.ticket.type.getAll.useQuery();
-  const { isLoading, mutateAsync } = trpc.ticket.update.useMutation();
-  const utils = trpc.useContext();
 
   const {
     formState: { errors },
@@ -52,9 +71,9 @@ export default function TicketDetails({ ticket }: { ticket: TicketType }) {
   });
 
   const onSubmit: SubmitHandler<FormSchemaType> = async (data) => {
-    await mutateAsync({ id: ticket.id, ...data });
+    await update(ticket.id, data);
 
-    await utils.ticket.get.invalidate({ id: ticket.id });
+    router.refresh();
 
     setEdit(false);
   };
@@ -239,7 +258,6 @@ export default function TicketDetails({ ticket }: { ticket: TicketType }) {
           <button
             type="submit"
             className="bg-slate-400 font-medium mt-1 px-2 py-1 rounded-md shadow-sm text-md text-slate-800 hover:bg-slate-500 hover:text-slate-900"
-            disabled={isLoading}
           >
             Update
           </button>

@@ -1,0 +1,32 @@
+@tailwind components;
+@tailwind base;
+@tailwind utilities;
+
+.details-form {
+  @apply flex flex-col px-1;
+}
+
+.details-form > div {
+  @apply flex flex-row items-center justify-between mt-1 space-x-2;
+
+  min-height: 2.5rem;
+}
+
+.details-form > div > div {
+  @apply flex flex-row items-center space-x-1;
+}
+
+.details-form > div > div > textarea {
+  @apply w-64;
+}
+
+.team-avatars {
+  @apply flex flex-row items-center justify-center;
+}
+
+.team-avatars > span {
+  @apply rounded-full;
+
+  border: 1px solid black !important;
+  margin-left: -12px !important;
+}
