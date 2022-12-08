@@ -1,6 +1,7 @@
 import { PlusIcon } from '@heroicons/react/outline';
 import type { Session } from 'next-auth';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 
 import TicketList from '../../../components/TicketList';
 import { prisma } from '../../../lib/db';
@@ -26,6 +27,8 @@ async function getTickets(session: Session) {
 
 export default async function Page() {
   const session = await getSession();
+  if (!session.user.admin && !session.user.pm) redirect('/');
+
   const tickets = await getTickets(session);
 
   return (

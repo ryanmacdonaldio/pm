@@ -31,9 +31,6 @@ interface DropdownLink extends BaseLink {
 type Link = URLLink | DropdownLink;
 
 export function SidebarLinks({ admin, pm }: { admin: boolean; pm: boolean }) {
-  console.log('admin', admin);
-  console.log('pm', pm);
-
   const [links, setLinks] = useState<Link[]>([
     {
       type: 'url',
@@ -108,8 +105,6 @@ export function SidebarLinks({ admin, pm }: { admin: boolean; pm: boolean }) {
       ],
     },
   ]);
-
-  console.log(links);
 
   return (
     <ul className="mb-4 ml-3">

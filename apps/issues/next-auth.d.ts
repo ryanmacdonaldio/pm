@@ -1,4 +1,3 @@
-import { UsersInProject } from '@prisma/client';
 import { DefaultSession } from 'next-auth';
 
 interface Settings {

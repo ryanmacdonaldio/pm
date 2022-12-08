@@ -1,6 +1,7 @@
 import { PlusIcon } from '@heroicons/react/outline';
 import type { Session } from 'next-auth';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 
 import ProjectList from '../../../components/ProjectList';
 import { prisma } from '../../../lib/db';
@@ -20,6 +21,8 @@ async function getProjects(session: Session) {
 
 export default async function Page() {
   const session = await getSession();
+  if (!session.user.admin && !session.user.pm) redirect('/');
+
   const projects = await getProjects(session);
 
   return (
