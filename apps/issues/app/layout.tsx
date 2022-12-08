@@ -27,8 +27,9 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const session = await getSession();
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const organizations = await getOrganizations(session!);
+  const organizations = await getOrganizations(session);
+
+  const { admin, pm } = session.user;
 
   return (
     <html lang="en">
@@ -39,7 +40,7 @@ export default async function RootLayout({
               Issues
             </span>
             <div className="border-t border-slate-400 mx-4 mb-4" />
-            <SidebarLinks />
+            <SidebarLinks admin={admin} pm={pm} />
             <div className="border-t border-slate-400 mx-4 mb-4" />
             <div className="flex-grow" />
             {organizations.length > 0 && (
