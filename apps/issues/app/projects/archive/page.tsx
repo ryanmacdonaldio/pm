@@ -16,7 +16,14 @@ async function getProjects(session: Session) {
     },
   });
 
-  return projects;
+  if (session.user.admin) return projects;
+
+  return projects.filter((project) =>
+    project.team
+      .filter((member) => member.manager)
+      .map((member) => member.userId)
+      .includes(session.user.id)
+  );
 }
 
 export default async function Page() {
