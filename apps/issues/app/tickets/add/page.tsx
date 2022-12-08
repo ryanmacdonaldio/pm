@@ -3,15 +3,21 @@ import type { Session } from 'next-auth';
 import TicketForm from '../../../components/TicketForm';
 import { getSession } from '../../../lib/session';
 import { prisma } from '../../../lib/db';
+import { z } from 'zod';
 
 async function getProjects(session: Session) {
   const projects = await prisma.project.findMany({
+    include: { team: true },
     where: {
       organizationId: session.user.settings.organization,
     },
   });
 
-  return projects;
+  if (session.user.admin) return projects;
+
+  return projects.filter((project) =>
+    project.team.map((member) => member.userId).includes(session.user.id)
+  );
 }
 
 async function getTicketPriorities(session: Session) {

@@ -1,4 +1,5 @@
 'use client';
+
 import {
   ArrowRightIcon,
   BookmarkIcon,
@@ -9,7 +10,9 @@ import Link from 'next/link';
 import { useState } from 'react';
 
 type BaseLink = {
+  admin?: boolean;
   icon?: (props: React.ComponentProps<'svg'>) => JSX.Element;
+  pm?: boolean;
   text: string;
   type: string;
 };
@@ -27,7 +30,7 @@ interface DropdownLink extends BaseLink {
 
 type Link = URLLink | DropdownLink;
 
-export function SidebarLinks() {
+export function SidebarLinks({ admin, pm }: { admin: boolean; pm: boolean }) {
   const [links, setLinks] = useState<Link[]>([
     {
       type: 'url',
@@ -42,11 +45,13 @@ export function SidebarLinks() {
       expanded: false,
       links: [
         {
+          admin: true,
           type: 'url',
           text: 'All Projects',
           url: '/projects/all',
         },
         {
+          admin: true,
           type: 'url',
           text: 'Add Project',
           url: '/projects/add',
@@ -57,6 +62,7 @@ export function SidebarLinks() {
           url: '/projects',
         },
         {
+          pm: true,
           type: 'url',
           text: 'Archived Projects',
           url: '/projects/archive',
@@ -70,6 +76,7 @@ export function SidebarLinks() {
       expanded: false,
       links: [
         {
+          pm: true,
           type: 'url',
           text: 'All Tickets',
           url: '/tickets/all',
@@ -90,6 +97,7 @@ export function SidebarLinks() {
           url: '/tickets/archive',
         },
         {
+          admin: true,
           type: 'url',
           text: 'Ticket Settings',
           url: '/tickets/settings',
@@ -131,25 +139,32 @@ export function SidebarLinks() {
               } duration-500 overflow-hidden transition-all`}
             >
               {link.links.map((sublink) => {
-                return (
+                return (!sublink.admin || admin) &&
+                  (!sublink.pm || pm || admin) ? (
                   <li
                     className="ml-1 text-slate-300 hover:text-slate-100"
                     key={sublink.text}
                   >
                     <Link href={sublink.url}>{sublink.text}</Link>
                   </li>
+                ) : (
+                  ''
                 );
               })}
             </ul>
           </li>
-        ) : (
+        ) : (!link.admin || admin) && (!link.pm || pm || admin) ? (
           <li
             className="flex items-center mb-1 ml-1 space-x-2 text-slate-300 hover:text-slate-100"
             key={link.text}
           >
             {link.icon && <link.icon className="h-4 w-4" />}
-            <Link href={link.url}>{link.text}</Link>
+            <Link href={link.url}>
+              {link.text} {link.admin}
+            </Link>
           </li>
+        ) : (
+          ''
         );
       })}
     </ul>

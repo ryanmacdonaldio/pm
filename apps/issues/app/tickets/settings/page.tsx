@@ -1,5 +1,6 @@
 import { PencilIcon, TrashIcon } from '@heroicons/react/outline';
 import { Session } from 'next-auth';
+import { redirect } from 'next/navigation';
 
 import TicketSettingsForm from '../../../components/TicketSettingsForm';
 import { prisma } from '../../../lib/db';
@@ -37,6 +38,8 @@ async function getTicketTypes(session: Session) {
 
 export default async function Page() {
   const session = await getSession();
+  if (!session.user.admin) redirect('/');
+
   const ticketPriorities = await getTicketPriorities(session);
   const ticketStatuses = await getTicketStatuses(session);
   const ticketTypes = await getTicketTypes(session);

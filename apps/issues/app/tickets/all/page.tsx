@@ -1,6 +1,7 @@
 import { PlusIcon } from '@heroicons/react/outline';
 import type { Session } from 'next-auth';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 
 import TicketList from '../../../components/TicketList';
 import { prisma } from '../../../lib/db';
@@ -9,7 +10,11 @@ import { getSession } from '../../../lib/session';
 async function getTickets(session: Session) {
   const tickets = await prisma.ticket.findMany({
     include: {
-      project: true,
+      project: {
+        include: {
+          team: true,
+        },
+      },
       ticketPriority: true,
       ticketStatus: true,
       ticketType: true,
@@ -21,11 +26,20 @@ async function getTickets(session: Session) {
     },
   });
 
-  return tickets;
+  if (session.user.admin) return tickets;
+
+  return tickets.filter((ticket) =>
+    ticket.project.team
+      .filter((member) => member.manager)
+      .map((member) => member.userId)
+      .includes(session.user.id)
+  );
 }
 
 export default async function Page() {
   const session = await getSession();
+  if (!session.user.admin && !session.user.pm) redirect('/');
+
   const tickets = await getTickets(session);
 
   return (
