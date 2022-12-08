@@ -10,7 +10,11 @@ import { getSession } from '../../../lib/session';
 async function getTickets(session: Session) {
   const tickets = await prisma.ticket.findMany({
     include: {
-      project: true,
+      project: {
+        include: {
+          team: true,
+        },
+      },
       ticketPriority: true,
       ticketStatus: true,
       ticketType: true,
@@ -22,7 +26,14 @@ async function getTickets(session: Session) {
     },
   });
 
-  return tickets;
+  if (session.user.admin) return tickets;
+
+  return tickets.filter((ticket) =>
+    ticket.project.team
+      .filter((member) => member.manager)
+      .map((member) => member.userId)
+      .includes(session.user.id)
+  );
 }
 
 export default async function Page() {
