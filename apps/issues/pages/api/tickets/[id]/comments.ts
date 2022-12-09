@@ -5,7 +5,7 @@ import { z } from 'zod';
 
 import { authOptions } from '../../../../lib/auth';
 import { prisma } from '../../../../lib/db';
-import { withAuthentication, withMethods } from '../../../../lib/middleware';
+import { withMethods, withTicket } from '../../../../lib/middleware';
 
 export const schema = TicketCommentModel.omit({
   createdAt: true,
@@ -42,4 +42,4 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   }
 }
 
-export default withMethods(['POST'], withAuthentication(handler));
+export default withMethods(['POST'], withTicket(handler));

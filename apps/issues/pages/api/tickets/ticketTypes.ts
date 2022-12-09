@@ -22,6 +22,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       authOptions
     )) as Session & { user: { settings: { organization: string } } };
 
+    if (!session.user.admin) return res.status(403).end();
+
     const ticketType = await prisma.ticketType.create({
       data: {
         ...body,
