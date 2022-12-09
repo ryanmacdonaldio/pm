@@ -1,23 +1,46 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { Session, unstable_getServerSession } from 'next-auth';
 import { z } from 'zod';
 
+import { authOptions } from '../../../../lib/auth';
 import { prisma } from '../../../../lib/db';
-import { withAuthentication, withMethods } from '../../../../lib/middleware';
+import { withMethods, withProject } from '../../../../lib/middleware';
 
 export const schema = z.object({
   user: z.string().min(1),
 });
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const id = req.query.id as string;
+
+  const session = (await unstable_getServerSession(
+    req,
+    res,
+    authOptions
+  )) as Session;
+
+  const projectPM = await prisma.usersInProject.findFirst({
+    where: {
+      manager: true,
+      projectId: id,
+    },
+  });
+
+  if (
+    !session.user.admin &&
+    (!projectPM || projectPM.userId !== session.user.id)
+  )
+    return res.status(403).end();
+
+  const body = await schema.parse(JSON.parse(req.body));
+
   switch (req.method) {
     case 'DELETE':
       try {
-        const body = await schema.parse(JSON.parse(req.body));
-
         await prisma.usersInProject.delete({
           where: {
             projectId_userId: {
-              projectId: req.query.id as string,
+              projectId: id,
               userId: body.user,
             },
           },
@@ -33,10 +56,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       }
     case 'POST':
       try {
-        const body = await schema.parse(JSON.parse(req.body));
-
         await prisma.usersInProject.create({
-          data: { projectId: req.query.id as string, userId: body.user },
+          data: { projectId: id, userId: body.user },
         });
 
         return res.status(200).end();
@@ -50,4 +71,4 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   }
 }
 
-export default withMethods(['DELETE', 'POST'], withAuthentication(handler));
+export default withMethods(['DELETE', 'POST'], withProject(handler));

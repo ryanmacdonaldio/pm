@@ -5,7 +5,7 @@ import { z } from 'zod';
 
 import { authOptions } from '../../../../lib/auth';
 import { prisma } from '../../../../lib/db';
-import { withAuthentication, withMethods } from '../../../../lib/middleware';
+import { withMethods, withTicket } from '../../../../lib/middleware';
 
 export const schema = TicketModel.omit({
   createdAt: true,
@@ -28,13 +28,32 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     )) as Session;
 
     const ticket = await prisma.ticket.findUnique({
-      include: { ticketPriority: true, ticketStatus: true, ticketType: true },
+      include: {
+        creator: true,
+        ticketPriority: true,
+        ticketStatus: true,
+        ticketType: true,
+      },
       where: {
         id,
       },
     });
 
     if (!ticket) return res.status(404).end();
+
+    const ticketPM = await prisma.usersInProject.findFirst({
+      where: {
+        manager: true,
+        projectId: ticket.projectId,
+      },
+    });
+
+    if (
+      !session.user.admin &&
+      (!ticketPM || ticketPM.userId !== session.user.id) &&
+      ticket.creatorId !== session.user.id
+    )
+      return res.status(403).end();
 
     if (body.ticketPriorityId !== ticket.ticketPriorityId) {
       let newValue = '';
@@ -172,4 +191,4 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   }
 }
 
-export default withMethods(['PATCH'], withAuthentication(handler));
+export default withMethods(['PATCH'], withTicket(handler));
