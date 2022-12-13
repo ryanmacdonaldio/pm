@@ -14,7 +14,11 @@ async function getProjects(session: Session) {
     },
   });
 
-  return projects;
+  if (session.user.admin) return projects;
+
+  return projects.filter((project) =>
+    project.team.map((member) => member.userId).includes(session.user.id)
+  );
 }
 
 async function getTickets(session: Session) {
