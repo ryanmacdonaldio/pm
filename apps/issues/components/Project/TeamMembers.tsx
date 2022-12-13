@@ -30,10 +30,12 @@ async function removeUser(project: string, user: string) {
 }
 
 export default function TeamMembers({
+  editable,
   id,
   organizationUsers,
   users,
 }: {
+  editable: boolean;
   id: string;
   organizationUsers: User[];
   users: User[];
@@ -87,14 +89,16 @@ export default function TeamMembers({
       <div className="bg-slate-50 col-span-1 p-4 rounded-lg shadow-md">
         <div className="flex flex-row justify-between">
           <span className="font-medium text-xl text-slate-900">Team</span>
-          <button
-            className={`bg-${addButtonColour}-100 border-2 border-${addButtonColour}-400 flex items-center px-2 rounded-md space-x-1 text-${addButtonColour}-900`}
-            disabled={addableUsers.length == 0}
-            onClick={() => setShowModal(true)}
-          >
-            <PlusIcon className="h-3 w-3" />
-            <span>Add</span>
-          </button>
+          {editable && (
+            <button
+              className={`bg-${addButtonColour}-100 border-2 border-${addButtonColour}-400 flex items-center px-2 rounded-md space-x-1 text-${addButtonColour}-900`}
+              disabled={addableUsers.length == 0}
+              onClick={() => setShowModal(true)}
+            >
+              <PlusIcon className="h-3 w-3" />
+              <span>Add</span>
+            </button>
+          )}
         </div>
         <div className="mt-2">
           {users.length === 0 ? (
@@ -108,10 +112,12 @@ export default function TeamMembers({
                 className="flex flex-row items-center justify-between"
               >
                 <span>{user.email}</span>
-                <TrashIcon
-                  className="cursor-pointer h-5 text-red-700 w-5"
-                  onClick={() => removeOnClick(user.id)}
-                />
+                {editable && (
+                  <TrashIcon
+                    className="cursor-pointer h-5 text-red-700 w-5"
+                    onClick={() => removeOnClick(user.id)}
+                  />
+                )}
               </div>
             ))
           )}
