@@ -29,6 +29,7 @@ async function getOrganizationUsers(session: Session) {
 
 async function getProject(id: string) {
   const project = await prisma.project.findUnique({
+    include: { team: true },
     where: { id },
   });
 
@@ -51,20 +52,6 @@ async function getTickets(id: string) {
   return tickets;
 }
 
-async function getTeam(id: string) {
-  const team = await prisma.user.findMany({
-    where: {
-      usersInProject: {
-        some: {
-          projectId: id,
-        },
-      },
-    },
-  });
-
-  return team;
-}
-
 async function getUsers(id: string) {
   const users = await prisma.user.findMany({
     where: { usersInProject: { some: { projectId: id } } },
@@ -82,9 +69,14 @@ export default async function Page({ params: { id } }: PageProps) {
   }
 
   const organizationUsers = await getOrganizationUsers(session);
-  const team = await getTeam(id);
   const tickets = await getTickets(id);
   const users = await getUsers(id);
+
+  const managerArray = project.team.filter((member) => member.manager);
+
+  const editable =
+    session.user.admin ||
+    (managerArray.length > 0 && managerArray[0].userId === session.user.id);
 
   return (
     <div className="auto-rows-min gap-4 grid grid-cols-4">
@@ -100,8 +92,9 @@ export default async function Page({ params: { id } }: PageProps) {
         </Link>
       </div>
       <div className="col-span-1 flex flex-col space-y-4">
-        <ProjectDetails project={project} />
+        <ProjectDetails editable={editable} project={project} />
         <ProjectTeamMembers
+          editable={editable}
           id={id}
           organizationUsers={organizationUsers}
           users={users}
