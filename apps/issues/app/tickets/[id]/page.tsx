@@ -24,7 +24,11 @@ async function getTicket(id: string) {
         include: { user: true },
         orderBy: [{ changedAt: 'desc' }],
       },
-      project: true,
+      project: {
+        include: {
+          team: true,
+        },
+      },
       ticketPriority: true,
       ticketStatus: true,
       ticketType: true,
@@ -83,6 +87,15 @@ export default async function Page({ params: { id } }: PageProps) {
   const ticketStatuses = await getTicketStatuses(session);
   const ticketTypes = await getTicketTypes(session);
 
+  const projectManagerArray = ticket.project.team.filter(
+    (member) => member.manager
+  );
+  const editable =
+    session.user.admin ||
+    (projectManagerArray.length > 0 &&
+      projectManagerArray[0].userId === session.user.id) ||
+    ticket.creatorId === session.user.id;
+
   return (
     <div className="auto-rows-min gap-4 grid grid-cols-4">
       <div className="col-span-4 flex items-center justify-between px-2">
@@ -98,6 +111,7 @@ export default async function Page({ params: { id } }: PageProps) {
       </div>
       <div className="col-span-1 flex flex-col space-y-4">
         <TicketDetails
+          editable={editable}
           ticket={ticket}
           ticketPriorities={ticketPriorities}
           ticketStatuses={ticketStatuses}

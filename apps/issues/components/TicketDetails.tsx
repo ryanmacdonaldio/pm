@@ -41,11 +41,13 @@ async function update(id: string, data: FormSchemaType) {
 }
 
 export default function TicketDetails({
+  editable,
   ticket,
   ticketPriorities,
   ticketStatuses,
   ticketTypes,
 }: {
+  editable: boolean;
   ticket: ExtendedTicketType;
   ticketPriorities: TicketPriority[];
   ticketStatuses: TicketStatus[];
@@ -95,25 +97,26 @@ export default function TicketDetails({
               )}`}
           </span>
         </div>
-        {edit ? (
-          <button
-            className="bg-red-100 border-2 border-red-400 flex h-8 items-center px-2 rounded-md space-x-1 text-red-900"
-            onClick={() => {
-              setEdit(false);
-              reset();
-            }}
-          >
-            <XIcon className="h-3 w-3" />
-          </button>
-        ) : (
-          <button
-            className="bg-blue-100 border-2 border-blue-400 flex h-8 items-center px-2 rounded-md space-x-1 text-blue-900"
-            onClick={() => setEdit(true)}
-          >
-            <PencilIcon className="h-3 w-3" />
-            <span>Edit</span>
-          </button>
-        )}
+        {editable &&
+          (edit ? (
+            <button
+              className="bg-red-100 border-2 border-red-400 flex h-8 items-center px-2 rounded-md space-x-1 text-red-900"
+              onClick={() => {
+                setEdit(false);
+                reset();
+              }}
+            >
+              <XIcon className="h-3 w-3" />
+            </button>
+          ) : (
+            <button
+              className="bg-blue-100 border-2 border-blue-400 flex h-8 items-center px-2 rounded-md space-x-1 text-blue-900"
+              onClick={() => setEdit(true)}
+            >
+              <PencilIcon className="h-3 w-3" />
+              <span>Edit</span>
+            </button>
+          ))}
       </div>
       <form className="details-form" onSubmit={handleSubmit(onSubmit)}>
         <div>
