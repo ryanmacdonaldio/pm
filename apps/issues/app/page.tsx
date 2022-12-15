@@ -2,7 +2,7 @@ import { PlusIcon } from '@heroicons/react/outline';
 import type { Session } from 'next-auth';
 import Link from 'next/link';
 
-import Charts, { ChartData } from '../components/Charts';
+import Charts, { ChartData, ChartKeys } from '../components/Charts';
 import ProjectList from '../components/ProjectList';
 import { prisma } from '../lib/db';
 import { getSession } from '../lib/session';
@@ -86,67 +86,45 @@ export default async function Page() {
     .filter((priority) => priority.rank === ticketPriorities[0].rank)
     .map((priority) => priority.id);
 
-  const data = projects.map((project) => {
+  const data: ChartData[] = projects.map((project) => {
     const project_data: ChartData = {
       project: project.name,
-      priority: [],
-      status: [],
-      type: [],
+      priority: {},
+      status: {},
+      type: {},
     };
 
-    const project_tickets = tickets?.filter(
+    const project_tickets = tickets.filter(
       (ticket) => ticket.projectId === project.id
     );
 
-    ticketPriorities.forEach((priority) => {
-      const count = project_tickets.filter(
-        (ticket) => ticket.ticketPriorityId === priority.id
-      ).length;
-
-      project_data.priority = project_data.priority.concat({
-        colour: priority.colour,
-        key: priority.value,
-        value: count,
-      });
-    });
-    ticketStatuses.forEach((status) => {
-      const count = project_tickets.filter(
-        (ticket) => ticket.ticketStatusId === status.id
-      ).length;
-
-      project_data.status = project_data.status.concat({
-        colour: status.colour,
-        key: status.value,
-        value: count,
-      });
-    });
-    ticketTypes.forEach((type) => {
-      const count = project_tickets.filter(
-        (ticket) => ticket.ticketTypeId === type.id
-      ).length;
-
-      project_data.type = project_data.type.concat({
-        colour: type.colour,
-        key: type.value,
-        value: count,
-      });
-    });
+    ticketPriorities.forEach(
+      (priority) =>
+        (project_data.priority[priority.value] = project_tickets.filter(
+          (ticket) => ticket.ticketPriorityId === priority.id
+        ).length)
+    );
+    ticketStatuses.forEach(
+      (status) =>
+        (project_data.status[status.value] = project_tickets.filter(
+          (ticket) => ticket.ticketStatusId === status.id
+        ).length)
+    );
+    ticketTypes.forEach(
+      (type) =>
+        (project_data.type[type.value] = project_tickets.filter(
+          (ticket) => ticket.ticketTypeId === type.id
+        ).length)
+    );
 
     return project_data;
   });
 
-  const keys: { [key: string]: string[] } = {};
-
-  data.forEach((project) => {
-    Object.keys(project)
-      .filter((key) => key != 'project')
-      .forEach((key) => {
-        const type = key.split(' ')[0];
-
-        if (!(type in keys)) keys[type] = [];
-        if (!keys[type].includes(key)) keys[type] = keys[type].concat(key);
-      });
-  });
+  const keys: ChartKeys = {
+    priority: ticketPriorities,
+    status: ticketStatuses,
+    type: ticketTypes,
+  };
 
   return (
     <div className="auto-rows-min gap-4 grid grid-cols-4">
