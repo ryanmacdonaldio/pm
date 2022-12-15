@@ -2,6 +2,7 @@ import { PlusIcon } from '@heroicons/react/outline';
 import type { Session } from 'next-auth';
 import Link from 'next/link';
 
+import Charts, { ChartData } from '../components/Charts';
 import ProjectList from '../components/ProjectList';
 import { prisma } from '../lib/db';
 import { getSession } from '../lib/session';
@@ -50,7 +51,27 @@ async function getTicketPriorities(session: Session) {
   return ticketPriorities;
 }
 
-// TODO: Create functions to fetch ticket statuses and types
+async function getTicketStatuses(session: Session) {
+  const ticketStatuses = await prisma.ticketStatus.findMany({
+    orderBy: [{ rank: 'asc' }, { value: 'asc' }],
+    where: {
+      organizationId: { equals: session.user.settings.organization },
+    },
+  });
+
+  return ticketStatuses;
+}
+
+async function getTicketTypes(session: Session) {
+  const ticketTypes = await prisma.ticketType.findMany({
+    orderBy: [{ rank: 'asc' }, { value: 'asc' }],
+    where: {
+      organizationId: { equals: session.user.settings.organization },
+    },
+  });
+
+  return ticketTypes;
+}
 
 export default async function Page() {
   const session = (await getSession()) as Session;
@@ -58,11 +79,74 @@ export default async function Page() {
   const projects = await getProjects(session);
   const tickets = await getTickets(session);
   const ticketPriorities = await getTicketPriorities(session);
-  // TODO: Import ticket statuses and types, also generate data for recharts
+  const ticketStatuses = await getTicketStatuses(session);
+  const ticketTypes = await getTicketTypes(session);
 
   const importantFilterIds = ticketPriorities
     .filter((priority) => priority.rank === ticketPriorities[0].rank)
     .map((priority) => priority.id);
+
+  const data = projects.map((project) => {
+    const project_data: ChartData = {
+      project: project.name,
+      priority: [],
+      status: [],
+      type: [],
+    };
+
+    const project_tickets = tickets?.filter(
+      (ticket) => ticket.projectId === project.id
+    );
+
+    ticketPriorities.forEach((priority) => {
+      const count = project_tickets.filter(
+        (ticket) => ticket.ticketPriorityId === priority.id
+      ).length;
+
+      project_data.priority = project_data.priority.concat({
+        colour: priority.colour,
+        key: priority.value,
+        value: count,
+      });
+    });
+    ticketStatuses.forEach((status) => {
+      const count = project_tickets.filter(
+        (ticket) => ticket.ticketStatusId === status.id
+      ).length;
+
+      project_data.status = project_data.status.concat({
+        colour: status.colour,
+        key: status.value,
+        value: count,
+      });
+    });
+    ticketTypes.forEach((type) => {
+      const count = project_tickets.filter(
+        (ticket) => ticket.ticketTypeId === type.id
+      ).length;
+
+      project_data.type = project_data.type.concat({
+        colour: type.colour,
+        key: type.value,
+        value: count,
+      });
+    });
+
+    return project_data;
+  });
+
+  const keys: { [key: string]: string[] } = {};
+
+  data.forEach((project) => {
+    Object.keys(project)
+      .filter((key) => key != 'project')
+      .forEach((key) => {
+        const type = key.split(' ')[0];
+
+        if (!(type in keys)) keys[type] = [];
+        if (!keys[type].includes(key)) keys[type] = keys[type].concat(key);
+      });
+  });
 
   return (
     <div className="auto-rows-min gap-4 grid grid-cols-4">
@@ -117,7 +201,7 @@ export default async function Page() {
       </div>
       <div className="bg-slate-50 col-span-4 flex flex-col p-4 rounded-lg shadow-md space-y-2">
         <span className="font-medium text-xl text-slate-900">Tickets</span>
-        {/* TODO: Implement recharts */}
+        <Charts data={data} keys={keys} />
       </div>
       <div className="bg-slate-50 col-span-4 p-4 rounded-lg shadow-md">
         <span className="font-medium text-xl text-slate-900">Projects</span>
