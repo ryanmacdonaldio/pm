@@ -78,7 +78,15 @@ export default function Charts({
     element
       .append('g')
       .attr('transform', `translate(${margin.left}, 0)`)
-      .call(YAxis);
+      .call(YAxis)
+      .call((g) => g.select('.domain').remove())
+      .call((g) =>
+        g
+          .selectAll('.tick line')
+          .clone()
+          .attr('x2', width - margin.left - margin.right)
+          .attr('stroke-opacity', 0.25)
+      );
 
     stacks.forEach((stack, stack_idx) =>
       element
