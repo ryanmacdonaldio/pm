@@ -22,6 +22,10 @@ export type ChartKeys = {
   type: string[];
 };
 
+function capitalize(s: string) {
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
 export default function Charts({
   colours,
   data,
@@ -58,8 +62,6 @@ export default function Charts({
         .value((d, key) => d[group][key])(data)
     );
 
-    console.log(stacks);
-
     const XDomain = new d3.InternSet(d3.map(data, (d) => d.project));
     const YDomain = d3.extent(stacks.flat(3)) as [number, number];
     const ZDomain = new d3.InternSet(order);
@@ -88,30 +90,49 @@ export default function Charts({
           .attr('stroke-opacity', 0.25)
       );
 
-    stacks.forEach((stack, stack_idx) =>
-      element
-        .append('g')
-        .selectAll('g')
-        .data(stack)
-        .join('g')
-        .attr('fill', (data) => colours[order[stack_idx]][data.key])
-        .selectAll('rect')
-        .data((d) => d)
-        .join('rect')
-        .attr(
-          'x',
-          ({ data: { project } }) => XScale(project) + XZScale(order[stack_idx])
-        )
-        .attr('y', ([y1, y2]) => Math.min(YScale(y1), YScale(y2)))
-        .attr('height', ([y1, y2]) => Math.abs(YScale(y1) - YScale(y2)))
-        .attr('width', XZScale.bandwidth())
-    );
+    stacks.forEach((stack, stack_idx) => {
+      console.log(stack);
+
+      const stackElement = element.append('g');
+
+      stack.forEach((d) => {
+        console.log(d);
+
+        const dElement = stackElement
+          .append('g')
+          .attr('fill', colours[order[stack_idx]][d.key]);
+
+        d.forEach((bar) => {
+          console.log(bar);
+
+          const [y1, y2] = bar;
+          const {
+            data: { project },
+          } = bar;
+
+          const barElement = dElement
+            .append('rect')
+            .attr('x', XScale(project) + XZScale(order[stack_idx]))
+            .attr('y', Math.min(YScale(y1), YScale(y2)))
+            .attr('height', Math.abs(YScale(y1) - YScale(y2)))
+            .attr('width', XZScale.bandwidth());
+
+          barElement
+            .append('title')
+            .text(
+              `${project} - ${capitalize(order[stack_idx])} (${
+                d.key
+              }): ${Math.abs(y1 - y2)}`
+            );
+        });
+      });
+    });
 
     element
       .append('g')
       .attr('transform', `translate(0, ${YScale(0)})`)
       .call(XAxis);
-  }, [data]);
+  }, [colours, data]);
 
   return <svg className="h-96 w-full" ref={ref}></svg>;
 }
