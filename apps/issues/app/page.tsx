@@ -2,7 +2,11 @@ import { PlusIcon } from '@heroicons/react/outline';
 import type { Session } from 'next-auth';
 import Link from 'next/link';
 
-import Charts, { ChartData, ChartKeys } from '../components/Charts';
+import Charts, {
+  ChartColours,
+  ChartData,
+  ChartKeys,
+} from '../components/Charts';
 import ProjectList from '../components/ProjectList';
 import { prisma } from '../lib/db';
 import { getSession } from '../lib/session';
@@ -121,10 +125,34 @@ export default async function Page() {
   });
 
   const keys: ChartKeys = {
-    priority: ticketPriorities,
-    status: ticketStatuses,
-    type: ticketTypes,
+    priority: ticketPriorities.map((priority) => priority.value),
+    status: ticketStatuses.map((status) => status.value),
+    type: ticketTypes.map((type) => type.value),
   };
+
+  const colours: ChartColours = {
+    priority: Object.assign(
+      {},
+      ...ticketPriorities.map((priority) => ({
+        [priority.value]:
+          priority.colour.length > 0 ? priority.colour : 'black',
+      }))
+    ),
+    status: Object.assign(
+      {},
+      ...ticketStatuses.map((status) => ({
+        [status.value]: status.colour.length > 0 ? status.colour : 'black',
+      }))
+    ),
+    type: Object.assign(
+      {},
+      ...ticketTypes.map((type) => ({
+        [type.value]: type.colour.length > 0 ? type.colour : 'black',
+      }))
+    ),
+  };
+
+  console.log(colours);
 
   return (
     <div className="auto-rows-min gap-4 grid grid-cols-4">
@@ -179,7 +207,7 @@ export default async function Page() {
       </div>
       <div className="bg-slate-50 col-span-4 flex flex-col p-4 rounded-lg shadow-md space-y-2">
         <span className="font-medium text-xl text-slate-900">Tickets</span>
-        <Charts data={data} keys={keys} />
+        <Charts colours={colours} data={data} keys={keys} />
       </div>
       <div className="bg-slate-50 col-span-4 p-4 rounded-lg shadow-md">
         <span className="font-medium text-xl text-slate-900">Projects</span>

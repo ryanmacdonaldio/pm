@@ -3,6 +3,12 @@
 import * as d3 from 'd3';
 import { useEffect, useRef } from 'react';
 
+export type ChartColours = {
+  priority: { [key: string]: string };
+  status: { [key: string]: string };
+  type: { [key: string]: string };
+};
+
 export type ChartData = {
   project: string;
   priority: { [key: string]: number };
@@ -11,15 +17,17 @@ export type ChartData = {
 };
 
 export type ChartKeys = {
-  priority: { value: string; colour: string }[];
-  status: { value: string; colour: string }[];
-  type: { value: string; colour: string }[];
+  priority: string[];
+  status: string[];
+  type: string[];
 };
 
 export default function Charts({
+  colours,
   data,
   keys,
 }: {
+  colours: ChartColours;
   data: ChartData[];
   keys: ChartKeys;
 }) {
@@ -41,20 +49,25 @@ export default function Charts({
     const XRange = [margin.left, width - margin.right];
     const YRange = [height - margin.bottom, margin.top];
 
-    const stacks = [
-      d3.stack().keys(keys.priority.map((p) => p.value))(
-        data.map((d) => d.priority)
-      ),
-      d3.stack().keys(keys.status.map((s) => s.value))(
-        data.map((d) => d.status)
-      ),
-      d3.stack().keys(keys.type.map((t) => t.value))(data.map((d) => d.type)),
-    ];
+    const order = ['priority', 'status', 'type'];
+
+    const stacks = order.map((group) =>
+      d3
+        .stack()
+        .keys(keys[group])
+        .value((d, key) => d[group][key])(data)
+    );
+
+    console.log(stacks);
 
     const XDomain = new d3.InternSet(d3.map(data, (d) => d.project));
     const YDomain = d3.extent(stacks.flat(3)) as [number, number];
+    const ZDomain = new d3.InternSet(order);
 
-    const XScale = d3.scaleBand(XDomain, XRange);
+    const XScale = d3.scaleBand(XDomain, XRange).paddingInner(0.1);
+    const XZScale = d3
+      .scaleBand(ZDomain, [0, XScale.bandwidth()])
+      .padding(0.05);
     const YScale = d3.scaleLinear(YDomain, YRange);
 
     const XAxis = d3.axisBottom(XScale);
@@ -66,6 +79,25 @@ export default function Charts({
       .append('g')
       .attr('transform', `translate(${margin.left}, 0)`)
       .call(YAxis);
+
+    stacks.forEach((stack, stack_idx) =>
+      element
+        .append('g')
+        .selectAll('g')
+        .data(stack)
+        .join('g')
+        .attr('fill', (data) => colours[order[stack_idx]][data.key])
+        .selectAll('rect')
+        .data((d) => d)
+        .join('rect')
+        .attr(
+          'x',
+          ({ data: { project } }) => XScale(project) + XZScale(order[stack_idx])
+        )
+        .attr('y', ([y1, y2]) => Math.min(YScale(y1), YScale(y2)))
+        .attr('height', ([y1, y2]) => Math.abs(YScale(y1) - YScale(y2)))
+        .attr('width', XZScale.bandwidth())
+    );
 
     element
       .append('g')
